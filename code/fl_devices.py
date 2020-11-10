@@ -147,12 +147,16 @@ class Client(Device):
 
   def compute_prediction_matrix(self, distill_loader):
     predictions = []
-    for x, _ in distill_loader:
+    idcs = []
+    for x, _, idx in distill_loader:
       x = x.to(device)
       s_predict = self.predict(x).detach()
       predictions += [s_predict]
+      idcs += [idx]
 
-    return torch.cat(predictions, dim=0).detach().cpu().numpy()
+    argidx = torch.argsort(torch.cat(idcs, dim=0))
+
+    return torch.cat(predictions, dim=0)[argidx].detach().cpu().numpy()
     
  
 class Server(Device):

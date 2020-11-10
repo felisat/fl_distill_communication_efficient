@@ -38,7 +38,6 @@ def run_experiment(xp, xp_count, n_experiments):
   np.random.seed(0)
   # What fraction of the unlabeled data should be used for training the anomaly detector
   distill_data = data.IdxSubset(all_distill_data, np.random.permutation(len(all_distill_data))[:hp["n_distill"]]) # data used for distillation
-  distill_loader = torch.utils.data.DataLoader(distill_data, batch_size=128, shuffle=True)
 
   client_data, label_counts = data.get_client_data(train_data, n_clients=hp["n_clients"], 
         classes_per_client=hp["classes_per_client"])
@@ -72,6 +71,9 @@ def run_experiment(xp, xp_count, n_experiments):
       train_stats = client.compute_weight_update(hp["local_epochs"], train_oulier_model=hp["aggregation_mode"] in ["FAD+S", "FAD+P+S"], c_round=c_round,
                 max_c_round=hp["communication_rounds"], **hp) 
       print(train_stats)
+
+      predictions = client.compute_prediction_matrix(server.distill_loader)
+      xp.log({"client_{}_predictions".format(client.id) : predictions})
 
     if hp["aggregation_mode"] in ["FA"]:
       server.aggregate_weight_updates(participating_clients)
