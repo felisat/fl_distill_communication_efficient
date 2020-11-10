@@ -16,7 +16,7 @@ hyperparameters=' [{
 	
 
 	"n_clients" : [20],
-	"classes_per_client" : [0.01],
+	"classes_per_client" : [100.0, 0.01],
 	"balancedness" : [1.0],
 
 
@@ -25,7 +25,7 @@ hyperparameters=' [{
 	"local_epochs" : [10],
 	"distill_epochs" : [3],
 	"n_distill" : [50000],
-	"distill_mode" : ["mean_probs"],
+	"distill_mode" : ["mean_probs", "pate", "pate_up"],
 	
 	
 	"batch_size" : [128],
