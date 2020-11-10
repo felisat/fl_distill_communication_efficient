@@ -43,16 +43,8 @@ def run_experiment(xp, xp_count, n_experiments):
   client_data, label_counts = data.get_client_data(train_data, n_clients=hp["n_clients"], 
         classes_per_client=hp["classes_per_client"])
 
-  if hp["aggregation_mode"] in ["FD+S", "FAD+S", "FAD+P+S"]:
-    public_data = data.IdxSubset(all_distill_data, np.random.permutation(len(all_distill_data))[hp["n_distill"]:len(all_distill_data)]) # data used to train the outlier detector
-    public_loader = torch.utils.data.DataLoader(public_data, batch_size=128, shuffle=True)
 
-    print(len(distill_data), len(public_data))
-
-    client_loaders = [data.DataMerger({'base': local_data, 'public': public_data}, **hp) for local_data in client_data]
-
-  else:
-    client_loaders = [data.DataMerger({'base': local_data}, **hp) for local_data in client_data]
+  client_loaders = [data.DataMerger({'base': local_data}, mixture_coefficients={'base':1}, **hp) for local_data in client_data]
 
   test_loader = data.DataMerger({'base': data.IdxSubset(test_data, list(range(len(test_data))))}, mixture_coefficients={'base':1}, batch_size=100)
   distill_loader = DataLoader(distill_data, batch_size=128, shuffle=True)
@@ -60,28 +52,8 @@ def run_experiment(xp, xp_count, n_experiments):
   clients = [Client(model_fn, optimizer_fn, loader, idnum=i, counts=counts, distill_loader=distill_loader) for i, (loader , counts) in enumerate(zip(client_loaders, label_counts))]
   server = Server(model_fn, lambda x : torch.optim.Adam(x, lr=2e-3), test_loader, distill_loader)
 
-  # Modes that use pretrained representation 
-  if hp["aggregation_mode"] in ["FAD+P", "FAD+P+S"]:
-    for device in clients+[server]:
-      device.model.load_state_dict(torch.load(args.CHECKPOINT_PATH+hp["pretrained"], map_location='cpu'), strict=False)
-    print("Successfully loader model from", hp["pretrained"])
 
 
-  """
-  # Train shallow Outlier detectors
-  if hp["aggregation_mode"] in ["FAD+S", "FAD+P+S"]:
-    feature_extractor = model_fn().cuda()
-    feature_extractor.load_state_dict(torch.load(args.CHECKPOINT_PATH+hp["pretrained"], map_location='cpu'), strict=False)
-    feature_extractor.eval()
-    for client in clients:
-      client.feature_extractor = feature_extractor
-
-    print("Train Outlier Detectors")
-    for client in tqdm(clients):
-      client.train_outlier_detector(hp["outlier_model"][0], distill_loader, **hp["outlier_model"][1])
-  """
-
-  averaging_stats = {"accuracy" : 0.0}
   models.print_model(server.model)
 
   # Start Distributed Training Process
@@ -101,17 +73,11 @@ def run_experiment(xp, xp_count, n_experiments):
                 max_c_round=hp["communication_rounds"], **hp) 
       print(train_stats)
 
-    if hp["aggregation_mode"] in ["FA", "FAD", "FAD+P", "FAD+S", "FAD+P+S"]:
+    if hp["aggregation_mode"] in ["FA"]:
       server.aggregate_weight_updates(participating_clients)
 
-      averaging_stats = server.evaluate()
-      xp.log({"parameter_averaging_{}".format(key) : value for key, value in averaging_stats.items()})
-    
-    if hp["aggregation_mode"] in ["FD", "FAD", "FAD+P", "FAD+S", "FAD+P+S"]:
-
-      distll_mode = "logits_weighted_with_max_score" if hp["aggregation_mode"] in ["FD+S", "FAD+S", "FAD+P+S"] else "mean_logits"
-      distill_stats = server.distill(participating_clients, hp["distill_epochs"], mode=distll_mode, acc0=averaging_stats["accuracy"], fallback=hp["fallback"])
-      xp.log({"distill_{}".format(key) : value for key, value in distill_stats.items()})
+    if hp["aggregation_mode"] in ["FD"]:
+      distill_stats = server.distill(participating_clients, hp["distill_epochs"], mode=hp["distill_mode"])
 
 
     # Logging

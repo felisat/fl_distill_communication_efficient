@@ -25,25 +25,18 @@ hyperparameters=' [{
 	"local_epochs" : [10],
 	"distill_epochs" : [3],
 	"n_distill" : [50000],
-	"fallback" : [true],
-	"lambda_outlier" : [1.0],
-	"lambda_fedprox" : [0.0],
-	"only_train_final_outlier_layer" : [false],
-
-
-	"warmup_type": ["constant"],
-	"mixture_coefficients" : [{"base":0.5, "public":0.5}],
-	"distill_weight": [1],
+	"distill_mode" : ["mean_probs"],
+	
 	
 	"batch_size" : [128],
-	"aggregation_mode" : ["FAD+S"],
+	"aggregation_mode" : ["FA"],
 	
 
 	"pretrained" : ["simclr_resnet8_stl10_100epochs.pth"],
 
 	"save_model" : [null],
 	"log_frequency" : [-100],
-	"log_path" : ["train_only_final_outlier_layer/"],
+	"log_path" : ["trash/"],
 	"job_id" : [['$SLURM_JOB_ID']]}]'
 
 

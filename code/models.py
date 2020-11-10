@@ -190,14 +190,6 @@ class lenet_cifar(nn.Module):
         x = self.fc3(x)
         return x
 
-    def forward_binary(self, x):
-        x = self.pool(F.relu(self.conv1(x)))
-        x = self.pool(F.relu(self.conv2(x)))
-        x = x.view(-1, 16 * 5 * 5)
-        x = F.relu(self.fc1(x))
-        x = F.relu(self.fc2(x))
-        x = self.binary(x)
-        return x
 
 
 
@@ -244,16 +236,6 @@ class lenet_mnist(torch.nn.Module):
         x = self.fc3(x)
         return x
 
-    def forward_binary(self, x, only_train_final_outlier_layer=False):
-        x = self.pool(F.relu(self.conv1(x)))
-        x = self.pool(F.relu(self.conv2(x)))
-        x = x.view(-1, 16 * 5 * 5)
-        x = F.relu(self.fc1(x))
-        x = F.relu(self.fc2(x))
-        if only_train_final_outlier_layer:
-            x = x.detach()
-        x = self.binary(x)
-        return x
 
 
 
@@ -322,12 +304,6 @@ class resnet8_bn(nn.Module):
         out = self.fc(feature)
         return out
 
-    def forward_binary(self, x):
-        x = self.f(x)
-        #x = x.detach()
-        feature = torch.flatten(x, start_dim=1)
-        out = self.binary(feature)
-        return out
 
 
 

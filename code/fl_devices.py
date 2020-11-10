@@ -7,7 +7,6 @@ import torch.nn as nn
 import numpy as np 
 from models import outlier_net
 
-from virtual_adversarial_training import VATLoss
 
 
 
@@ -60,13 +59,11 @@ class Client(Device):
     self.loader.update(c_round=c_round)
     #copy(target=self.W, source=server.W)
     
-  def compute_weight_update(self, epochs=1, loader=None, reset_optimizer=False, train_oulier_model=False, lambda_outlier=0.1, lambda_ent=0.0, **kwargs):
+  def compute_weight_update(self, epochs=1, loader=None, reset_optimizer=False, **kwargs):
     if reset_optimizer:
       self.optimizer = self.optimizer_fn(self.model.parameters())  
-    if train_oulier_model:
-      train_stats = train_op_with_score(self.model, self.loader if not loader else loader, self.optimizer, self.scheduler, epochs, lambda_outlier, lambda_ent, **kwargs)
-    else:
-      train_stats = train_op(self.model, self.loader if not loader else loader, self.optimizer, self.scheduler, epochs, **kwargs)
+ 
+    train_stats = train_op(self.model, self.loader if not loader else loader, self.optimizer, self.scheduler, epochs, **kwargs)
     #print(self.label_counts)
     #eval_scores(self.model, self.distill_loader)
 
@@ -193,44 +190,7 @@ class Server(Device):
           for i, client in enumerate(clients):
             y_p = client.predict_logit(x)
             y += (y_p/len(clients)).detach()
-          y = nn.Softmax(1)(y)
-
-        if mode == "probs_weighted_with_deep_outlier_score":
-          y = torch.zeros([x.shape[0], 10], device="cuda")
-          w = torch.zeros([x.shape[0], 1], device="cuda")
-          for i, client in enumerate(clients):
-            y_p = client.predict(x)
-            weight = client.predict_deep_outlier_score(x).reshape(-1,1).cuda()
-
-            y += (y_p*weight).detach()
-            w += weight.detach()
-          y = y / w
-
-        if mode == "logits_weighted_with_deep_outlier_score":
-          y = torch.zeros([x.shape[0], 10], device="cuda")
-          w = torch.zeros([x.shape[0], 1], device="cuda")
-          for i, client in enumerate(clients):
-            y_p = client.predict_logit(x)
-            weight = client.predict_deep_outlier_score(x).reshape(-1,1).cuda()
-
-            y += (y_p*weight).detach()
-            w += weight.detach()
-          y = nn.Softmax(1)(y / w)
-
-        if mode == "logits_weighted_with_max_score":
-          y = torch.zeros([x.shape[0], 10], device="cuda")
-          w = torch.zeros([x.shape[0], 1], device="cuda")
-          for i, client in enumerate(clients):
-            y_p = client.predict_logit(x)
-            weight = client.predict_deep_outlier_score(x).reshape(-1,1).cuda()
-
-            y += (y_p*weight).detach()
-            w += weight.detach()
-          y = nn.Softmax(1)(y / w)
-
-          amax = torch.argmax(y, dim=1)
-          y = torch.zeros_like(y)
-          y[torch.arange(y.shape[0]),amax] = 1          
+          y = nn.Softmax(1)(y)         
 
         if mode == "pate":
           hist = torch.sum(torch.stack([client.predict_max(x) for client in clients]), dim=0)
