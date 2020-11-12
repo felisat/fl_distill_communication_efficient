@@ -25,11 +25,11 @@ hyperparameters=' [{
 	"local_epochs" : [10],
 	"distill_epochs" : [2],
 	"n_distill" : [50000],
-	"distill_mode" : ["pate_up", "mean_probs"],
+	"distill_mode" : ["mean_probs"],
 	
 	
 	"batch_size" : [128],
-	"aggregation_mode" : ["FD"],
+	"aggregation_mode" : ["FA"],
 	
 
 	"pretrained" : ["simclr_resnet8_stl10_100epochs.pth"],
