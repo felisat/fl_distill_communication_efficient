@@ -16,15 +16,15 @@ hyperparameters=' [{
 	
 
 	"n_clients" : [20],
-	"classes_per_client" : [100.0, 0.01],
+	"classes_per_client" : [100.0, 1.0],
 	"balancedness" : [1.0],
 
 
 	"communication_rounds" : [50],
 	"participation_rate" : [0.4],
-	"local_epochs" : [40],
-	"distill_epochs" : [2],
-	"n_distill" : [50000],
+	"local_epochs" : [20],
+	"distill_epochs" : [1],
+	"n_distill" : [80000],
 	
 	
 	"batch_size" : [128],
@@ -35,7 +35,7 @@ hyperparameters=' [{
 
 	"save_model" : [null],
 	"log_frequency" : [-100],
-	"log_path" : ["trash/"],
+	"log_path" : ["cifar_resnet8_exp2/"],
 	"job_id" : [['$SLURM_JOB_ID']]}]'
 
 
