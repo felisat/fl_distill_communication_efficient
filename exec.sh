@@ -10,9 +10,9 @@
 cmdargs=$1
 
 hyperparameters=' [{
-	"dataset" : ["mnist"], 
-	"distill_dataset" : ["emnist"],
-	"net" : ["lenet_mnist"],
+	"dataset" : ["cifar10"], 
+	"distill_dataset" : ["stl10"],
+	"net" : ["resnet8_bn"],
 	
 
 	"n_clients" : [20],
@@ -23,13 +23,13 @@ hyperparameters=' [{
 	"communication_rounds" : [50],
 	"participation_rate" : [0.4],
 	"local_epochs" : [10],
-	"distill_epochs" : [3],
+	"distill_epochs" : [2],
 	"n_distill" : [50000],
-	"distill_mode" : ["mean_probs"],
+	"distill_mode" : ["pate_up", "mean_probs"],
 	
 	
 	"batch_size" : [128],
-	"aggregation_mode" : ["FA"],
+	"aggregation_mode" : ["FD"],
 	
 
 	"pretrained" : ["simclr_resnet8_stl10_100epochs.pth"],

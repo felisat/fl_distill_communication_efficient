@@ -292,7 +292,6 @@ class resnet8_bn(nn.Module):
         self.f = Model(group_norm=group_norm).f
         # classifier
         self.fc = nn.Linear(512, num_class, bias=True)
-        self.binary = nn.Linear(512, 2, bias=True)
 
 
         if pretrained_path:

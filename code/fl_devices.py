@@ -156,7 +156,9 @@ class Client(Device):
 
     argidx = torch.argsort(torch.cat(idcs, dim=0))
 
-    return torch.cat(predictions, dim=0)[argidx].detach().cpu().numpy()
+    predictions =  torch.cat(predictions, dim=0)[argidx].detach().cpu().numpy()
+
+    return np.argmax(predictions, axis=-1).astype("uint8")
     
  
 class Server(Device):
@@ -171,7 +173,7 @@ class Server(Device):
     reduce_average(target=self.W, sources=[client.W for client in clients])
 
 
-  def distill(self, clients, epochs=1, mode="mean_probs", reset_optimizer=False, acc0=0.0, fallback=True):
+  def distill(self, clients, epochs=1, mode="mean_probs", reset_optimizer=False):
     print("Distilling...")
     if reset_optimizer:
       self.optimizer = self.optimizer_fn(self.model.parameters())   
@@ -221,8 +223,6 @@ class Server(Device):
       acc_new = eval_op(self.model, self.loader)["accuracy"]
       print(acc_new)
    
-    if fallback and acc_new < acc0:
-      self.aggregate_weight_updates(clients)
 
     return {"loss" : running_loss / samples, "acc" : acc_new, "epochs" : ep}
 
