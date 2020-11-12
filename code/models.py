@@ -28,13 +28,6 @@ class VGG(nn.Module):
             nn.Linear(size, out),
         )
 
-        self.binary = nn.Sequential(
-            #nn.Dropout(),
-            nn.Linear(size, size),
-            nn.ReLU(True),
-            #nn.Dropout(),
-            nn.Linear(size, 2),
-        )
          # Initialize weights
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
@@ -49,13 +42,8 @@ class VGG(nn.Module):
         x = self.classifier(x)
         return x
 
-    def forward_binary(self, x):
-        x = self.features(x)
-        x = x.view(x.size(0), -1)
-        x = self.binary(x)
-        return x
 
-    def make_layers(self, cfg, batch_norm=False):
+    def make_layers(self, cfg, batch_norm=True):
         layers = []
         in_channels = 3
         for v in cfg:
@@ -418,7 +406,7 @@ class Autoencoder(nn.Module):
 
 def get_model(model):
 
-  return  { "vgg16" : (vgg16, optim.SGD, {"lr":0.04, "momentum":0.9, "weight_decay":5e-5}),
+  return  { "vgg16" : (vgg16, optim.SGD, {"lr":0.04, "momentum":0.0, "weight_decay":5e-5}),
             "vgg11s" : (vgg11s, optim.SGD, {"lr":0.04, "momentum":0.9, "weight_decay":5e-5}),
             "vgg11" : (vgg11, optim.SGD, {"lr":0.01, "momentum":0.9, "weight_decay":5e-5}),
               "lenet_cifar" : (lenet_cifar, optim.Adam, {"lr":0.001, "weight_decay":0.0}),
