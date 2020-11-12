@@ -78,8 +78,9 @@ def run_experiment(xp, xp_count, n_experiments):
     if hp["aggregation_mode"] in ["FA"]:
       server.aggregate_weight_updates(participating_clients)
 
-    if hp["aggregation_mode"] in ["FD"]:
-      distill_stats = server.distill(participating_clients, hp["distill_epochs"], mode=hp["distill_mode"])
+    if hp["aggregation_mode"] in ["FD", "FDcup"]:
+      distill_mode = {"FD" : "mean_probs", "FDcup" : "pate_up"}[hp["aggregation_mode"]]
+      distill_stats = server.distill(participating_clients, hp["distill_epochs"], mode=distill_mode)
 
 
     # Logging
