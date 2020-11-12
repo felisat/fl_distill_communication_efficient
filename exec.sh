@@ -21,7 +21,7 @@ hyperparameters=' [{
 
 
 	"communication_rounds" : [50],
-	"participation_rate" : [0.4],
+	"participation_rate" : [1.0],
 	"local_epochs" : [20],
 	"distill_epochs" : [1],
 	"n_distill" : [80000],
