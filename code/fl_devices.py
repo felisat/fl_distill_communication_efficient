@@ -91,6 +91,19 @@ class Client(Device):
 
     return t.detach()
 
+  def predict_sampled(self, x):
+    """Onehot Argmax prediction on input"""
+    y_ = self.predict(x)
+
+    prob_dist = torch.distributions.Categorical(y_) # probs should be of size batch x classes
+    samples = prob_dist.sample().detach()
+
+
+    t = torch.zeros_like(y_)
+    t[torch.arange(y_.shape[0]),samples] = 1
+
+    return t.detach()
+
   def predict_random(self, x):
     """Random prediction on input"""
     adv = torch.zeros(size=[x.shape[0],10], device="cuda")
@@ -197,6 +210,9 @@ class Server(Device):
             y_p = client.predict_logit(x)
             y += (y_p/len(clients)).detach()
           y = nn.Softmax(1)(y)         
+
+        if mode == "sample":
+          y = torch.mean(torch.stack([client.predict_sampled(x) for client in clients]), dim=0)
 
         if mode == "pate":
           hist = torch.sum(torch.stack([client.predict_max(x) for client in clients]), dim=0)
