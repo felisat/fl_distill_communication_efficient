@@ -186,17 +186,20 @@ class Server(Device):
     reduce_average(target=self.W, sources=[client.W for client in clients])
 
 
-  def distill(self, clients, epochs=1, mode="mean_probs", reset_optimizer=False):
+  def distill(self, clients, distill_iter, mode, reset_optimizer=False):
     print("Distilling...")
     if reset_optimizer:
       self.optimizer = self.optimizer_fn(self.model.parameters())   
     self.model.train()  
 
     acc = 0
-    for ep in range(epochs):
+    itr = 0
+    #for ep in range(epochs):
+    while True:
       running_loss, samples = 0.0, 0
       for x,_, idx in tqdm(self.distill_loader):   
-        x = x.to(device)     
+        x = x.to(device) 
+        itr += 1    
 
         if mode == "mean_probs":
           y = torch.zeros([x.shape[0], 10], device="cuda")
@@ -239,8 +242,8 @@ class Server(Device):
       acc_new = eval_op(self.model, self.loader)["accuracy"]
       print(acc_new)
    
-
-    return {"loss" : running_loss / samples, "acc" : acc_new, "epochs" : ep}
+      if itr >= distill_iter:
+        return {"loss" : running_loss / samples, "acc" : acc_new, "epochs" : ep}
 
 
 

@@ -23,8 +23,8 @@ hyperparameters=' [{
 	"communication_rounds" : [50],
 	"participation_rate" : [1.0],
 	"local_epochs" : [20],
-	"distill_epochs" : [1],
-	"n_distill" : [2500, 5000, 10000, 20000, 40000, 80000],
+	"distill_iter" : [1000],
+	"n_distill" : [2500, 5000, 10000, 20000],
 	
 	
 	"batch_size" : [128],
@@ -35,7 +35,7 @@ hyperparameters=' [{
 
 	"save_model" : [null],
 	"log_frequency" : [-100],
-	"log_path" : ["n_distill_data/"],
+	"log_path" : ["n_distill_data_2/"],
 	"job_id" : [['$SLURM_JOB_ID']]}]'
 
 
