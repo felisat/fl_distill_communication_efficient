@@ -238,12 +238,11 @@ class Server(Device):
         loss.backward()
         self.optimizer.step()  
 
-
-      acc_new = eval_op(self.model, self.loader)["accuracy"]
-      print(acc_new)
    
       if itr >= distill_iter:
-        return {"loss" : running_loss / samples, "acc" : acc_new, "epochs" : ep}
+        acc_new = eval_op(self.model, self.loader)["accuracy"]
+        print(acc_new)
+        return {"loss" : running_loss / samples, "acc" : acc_new}
 
 
 

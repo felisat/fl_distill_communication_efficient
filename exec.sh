@@ -24,7 +24,7 @@ hyperparameters=' [{
 	"participation_rate" : [1.0],
 	"local_epochs" : [20],
 	"distill_iter" : [1000],
-	"n_distill" : [2500, 5000, 10000, 20000],
+	"n_distill" : [2500, 5000, 10000, 20000, 40000, 80000],
 	
 	
 	"batch_size" : [128],
