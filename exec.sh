@@ -20,7 +20,7 @@ hyperparameters=' [{
 	"balancedness" : [1.0],
 
 
-	"communication_rounds" : [50],
+	"communication_rounds" : [20],
 	"participation_rate" : [1.0],
 	"local_epochs" : [20],
 	"distill_iter" : [1000],
