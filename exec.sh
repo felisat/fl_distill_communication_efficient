@@ -28,7 +28,7 @@ hyperparameters=' [{
 	
 	
 	"batch_size" : [128],
-	"aggregation_mode" : ["FA","FD"],
+	"aggregation_mode" : ["FD", "FDcup"],
 	
 
 	"pretrained" : ["simclr_resnet8_stl10_100epochs.pth"],
