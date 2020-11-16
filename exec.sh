@@ -16,15 +16,17 @@ hyperparameters=' [{
 	
 
 	"n_clients" : [20],
-	"classes_per_client" : [1.0000e-02, 2.0000e-02, 4.0000e-02, 8.0000e-02, 1.6000e-01, 3.2000e-01, 6.4000e-01, 1.2800e+00, 2.5600e+00, 5.1200e+00, 1.0240e+01, 2.0480e+01, 4.0960e+01, 8.1920e+01, 1.6384e+02],
+	"classes_per_client" : [0.1],
 	"balancedness" : [1.0],
 
 
-	"communication_rounds" : [30],
-	"participation_rate" : [1.0],
+	"communication_rounds" : [50],
+	"participation_rate" : [0.4],
 	"local_epochs" : [20],
 	"distill_iter" : [1000],
 	"n_distill" : [10000],
+	"co_distill" : [true, false],
+	"co_distill_iter" : [4000], 
 	
 	
 	"batch_size" : [128],
@@ -35,7 +37,7 @@ hyperparameters=' [{
 
 	"save_model" : [null],
 	"log_frequency" : [-100],
-	"log_path" : ["non_iid_compression_rate_2/"],
+	"log_path" : ["co_distill/"],
 	"job_id" : [['$SLURM_JOB_ID']]}]'
 
 

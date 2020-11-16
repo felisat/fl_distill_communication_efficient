@@ -178,12 +178,51 @@ class Server(Device):
   def __init__(self, model_fn, optimizer_fn, loader, unlabeled_loader, init=None):
     super().__init__(model_fn, optimizer_fn, loader, init)
     self.distill_loader = unlabeled_loader
+
+    self.model_fn = model_fn
+    self.co_model = model_fn().to(device)
     
   def select_clients(self, clients, frac=1.0):
     return random.sample(clients, int(len(clients)*frac)) 
     
   def aggregate_weight_updates(self, clients):
     reduce_average(target=self.W, sources=[client.W for client in clients])
+
+  def co_distill(self, distill_iter):
+    self.co_model = model_fn().to(device)
+
+    self.co_optimizer = self.optimizer_fn(self.co_model.parameters())   
+    self.co_model.train()  
+
+    acc = 0
+    itr = 0
+    #for ep in range(epochs):
+    while True:
+      running_loss, samples = 0.0, 0
+      for x,_, idx in tqdm(self.distill_loader):   
+        x = x.to(device) 
+        itr += 1    
+
+        y = self.model(x) 
+
+        self.co_optimizer.zero_grad()
+        y_ = nn.Softmax(1)(self.co_model(x))
+
+        loss = kulbach_leibler_divergence(y_,y.detach())
+
+        running_loss += loss.item()*y.shape[0]
+        samples += y.shape[0]
+
+        loss.backward()
+        self.co_optimizer.step()  
+
+      if itr >= distill_iter:
+        acc_new = eval_op(self.model, self.loader)["accuracy"]
+        print(acc_new)
+
+        self.model.load_state_dict(self.co_model.state_dict(), strict=False)
+
+        return {"loss" : running_loss / samples, "acc" : acc_new}
 
 
   def distill(self, clients, distill_iter, mode, reset_optimizer=False):
@@ -225,6 +264,13 @@ class Server(Device):
 
         if mode == "pate_up":
           y = torch.mean(torch.stack([client.predict_max(x) for client in clients]), dim=0)
+
+        if mode == "mean_logits_er":
+          y = torch.zeros([x.shape[0], 10], device="cuda")
+          for i, client in enumerate(clients):
+            y_p = client.predict_logit(x)
+            y += (y_p/len(clients)).detach()
+          y = nn.Softmax(1)(y/0.1)  
 
 
         self.optimizer.zero_grad()
