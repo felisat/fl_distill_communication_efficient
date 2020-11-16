@@ -21,23 +21,24 @@ hyperparameters=' [{
 
 
 	"communication_rounds" : [50],
-	"participation_rate" : [0.4],
+	"participation_rate" : [1.0],
 	"local_epochs" : [20],
 	"distill_iter" : [1000],
-	"n_distill" : [10000],
-	"co_distill" : [true, false],
-	"co_distill_iter" : [4000], 
+	"n_distill" : [80000],
+	"reset_model" : [false],
+	"co_distill" : [false],
+	"co_distill_iter" : [2000], 
 	
 	
 	"batch_size" : [128],
-	"aggregation_mode" : ["FD"],
+	"aggregation_mode" : ["FD", "FDer"],
 	
 
 	"pretrained" : ["simclr_resnet8_stl10_100epochs.pth"],
 
 	"save_model" : [null],
 	"log_frequency" : [-100],
-	"log_path" : ["co_distill/"],
+	"log_path" : ["entropy_reduction/"],
 	"job_id" : [['$SLURM_JOB_ID']]}]'
 
 

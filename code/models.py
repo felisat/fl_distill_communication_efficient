@@ -411,7 +411,7 @@ def get_model(model):
             "vgg11" : (vgg11, optim.SGD, {"lr":0.01, "momentum":0.9, "weight_decay":5e-5}),
               "lenet_cifar" : (lenet_cifar, optim.Adam, {"lr":0.001, "weight_decay":0.0}),
                "lenet_large" : (lenet_large, optim.SGD, {"lr":0.01, "momentum" : 0.9, "weight_decay":0.0}),
-              "lenet_mnist" : (lenet_mnist, optim.Adam, {"lr":0.001, "weight_decay":0.0}),
+              "lenet_mnist" : (lenet_mnist, optim.SGD, {"lr":0.01, "weight_decay":0.0}),
               "mobilenetv2" : (mobilenetv2, optim.SGD, {"lr" : 0.01, "momentum" :0.9, "weight_decay" :5e-4}),
               "mobilenetv2s" : (mobilenetv2s, optim.SGD, {"lr" : 0.01, "momentum" :0.9, "weight_decay" :5e-4}),
               "mobilenetv2xs" : (mobilenetv2xs, optim.SGD, {"lr" : 0.01, "momentum" :0.9, "weight_decay" :5e-4}),

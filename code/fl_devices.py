@@ -50,7 +50,11 @@ class Client(Device):
     self.distill_loader = distill_loader
 
   def synchronize_with_server(self, server, c_round):
-    server_state = server.model.state_dict()
+    if server.co_model is None:
+      server_state = server.model.state_dict()
+    else:
+      server_state = server.co_model.state_dict()
+      print("Using co model")
     server_state = {k : v for k, v in server_state.items() if "binary" not in k}
     self.model.load_state_dict(server_state, strict=False)
     self.c_round = c_round
@@ -180,7 +184,7 @@ class Server(Device):
     self.distill_loader = unlabeled_loader
 
     self.model_fn = model_fn
-    self.co_model = model_fn().to(device)
+    self.co_model = None
     
   def select_clients(self, clients, frac=1.0):
     return random.sample(clients, int(len(clients)*frac)) 
@@ -189,10 +193,11 @@ class Server(Device):
     reduce_average(target=self.W, sources=[client.W for client in clients])
 
   def co_distill(self, distill_iter):
-    self.co_model = model_fn().to(device)
+    self.co_model = self.model_fn().to(device)
 
     self.co_optimizer = self.optimizer_fn(self.co_model.parameters())   
     self.co_model.train()  
+    self.model.train()
 
     acc = 0
     itr = 0
@@ -203,7 +208,7 @@ class Server(Device):
         x = x.to(device) 
         itr += 1    
 
-        y = self.model(x) 
+        y = nn.Softmax(1)(self.model(x))
 
         self.co_optimizer.zero_grad()
         y_ = nn.Softmax(1)(self.co_model(x))
@@ -216,17 +221,22 @@ class Server(Device):
         loss.backward()
         self.co_optimizer.step()  
 
+      print(running_loss / samples)
       if itr >= distill_iter:
-        acc_new = eval_op(self.model, self.loader)["accuracy"]
+        acc_new = eval_op(self.co_model, self.loader)["accuracy"]
         print(acc_new)
 
-        self.model.load_state_dict(self.co_model.state_dict(), strict=False)
+        #self.model.load_state_dict(self.co_model.state_dict(), strict=False)
 
         return {"loss" : running_loss / samples, "acc" : acc_new}
 
 
-  def distill(self, clients, distill_iter, mode, reset_optimizer=False):
+  def distill(self, clients, distill_iter, mode, reset_optimizer=False, reset_model=False):
     print("Distilling...")
+    if reset_model:
+      self.model = self.model_fn().to(device)
+      self.optimizer = self.optimizer_fn(self.model.parameters()) 
+      print("Hey") 
     if reset_optimizer:
       self.optimizer = self.optimizer_fn(self.model.parameters())   
     self.model.train()  
