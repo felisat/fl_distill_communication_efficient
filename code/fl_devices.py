@@ -236,7 +236,7 @@ class Server(Device):
     if reset_model:
       self.model = self.model_fn().to(device)
       self.optimizer = self.optimizer_fn(self.model.parameters()) 
-      print("Hey") 
+
     if reset_optimizer:
       self.optimizer = self.optimizer_fn(self.model.parameters())   
     self.model.train()  
