@@ -10,9 +10,9 @@
 cmdargs=$1
 
 hyperparameters=' [{
-	"dataset" : ["cifar10"], 
-	"distill_dataset" : ["stl10"],
-	"net" : ["resnet8_bn"],
+	"dataset" : ["mnist"], 
+	"distill_dataset" : ["emnist"],
+	"net" : ["lenet_mnist"],
 	
 
 	"n_clients" : [20],
@@ -41,7 +41,7 @@ hyperparameters=' [{
 
 	"save_model" : [null],
 	"log_frequency" : [-100],
-	"log_path" : ["quantized_cifar/"],
+	"log_path" : ["quantized_mnist/"],
 	"job_id" : [['$SLURM_JOB_ID']]}]'
 
 
