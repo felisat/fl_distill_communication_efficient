@@ -72,14 +72,15 @@ def run_experiment(xp, xp_count, n_experiments):
                 max_c_round=hp["communication_rounds"], **hp) 
       print(train_stats)
 
-      predictions = client.compute_prediction_matrix(server.distill_loader)
-      xp.log({"client_{}_predictions".format(client.id) : predictions})
+      if hp["save_softlabels"]:
+        predictions = client.compute_prediction_matrix(server.distill_loader)
+        xp.log({"client_{}_predictions".format(client.id) : predictions})
 
     if hp["aggregation_mode"] in ["FA"]:
       server.aggregate_weight_updates(participating_clients)
 
-    if hp["aggregation_mode"] in ["FD", "FDcup", "FDsample", "FDcupdown", "FDer"]:
-      distill_mode = {"FD" : "mean_probs", "FDcup" : "pate_up", "FDsample" : "sample", "FDcupdown" : "pate", "FDer" : "mean_logits_er"}[hp["aggregation_mode"]]
+    if hp["aggregation_mode"] in ["FD", "FDcup", "FDsample", "FDcupdown", "FDer", "FDquant"]:
+      distill_mode = {"FD" : "mean_probs", "FDcup" : "pate_up", "FDsample" : "sample", "FDcupdown" : "pate", "FDer" : "mean_logits_er", "FDquant" : ["quantized", hp["quantization_bits"]]}[hp["aggregation_mode"]]
       distill_stats = server.distill(participating_clients, hp["distill_iter"], mode=distill_mode, reset_model=hp["reset_model"])
 
       if hp["co_distill"]:

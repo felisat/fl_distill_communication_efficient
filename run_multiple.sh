@@ -8,5 +8,5 @@ echo "Running $max experiments..."
 
 for (( c=0; c<$max; c+=$step ))
 do
-   sbatch exec.sh "--start $c --end $(($c+$step))"
+   sbatch --reservation=deadline_fsattler exec.sh "--start $c --end $(($c+$step))"
 done

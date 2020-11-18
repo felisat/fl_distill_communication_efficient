@@ -282,6 +282,16 @@ class Server(Device):
             y += (y_p/len(clients)).detach()
           y = nn.Softmax(1)(y/0.1)  
 
+        if isinstance(mode, list) and mode[0] == "quantized":
+          bits = mode[1]
+
+          y = torch.zeros([x.shape[0], 10], device="cuda")
+          for i, client in enumerate(clients):
+            y_p = client.predict(x)
+            y_quant = quantize_probs(y_p, bits)
+
+            y += (y_quant/len(clients)).detach()
+
 
         self.optimizer.zero_grad()
         y_ = nn.Softmax(1)(self.model(x))
@@ -430,3 +440,25 @@ def sigmoid(x):
 def kulbach_leibler_divergence(predicted, target):
   return -(target * torch.log(predicted.clamp_min(1e-7))).sum(dim=-1).mean() 
   #+ 1*(target.clamp(min=1e-7) * torch.log(target.clamp(min=1e-7))).sum(dim=-1).mean()
+
+
+
+def quant(x, bits):
+    m = 2**bits-1
+    return torch.round(x * m)/m
+
+def quantize_probs(x, bits):
+    q = quant(x, bits)
+    
+    delt = torch.round((1-q.sum(dim=1))*(2**bits-1))
+    absdelt = torch.abs(delt).long()
+    
+    V = torch.argsort(-(x-q)*delt.view(-1,1),dim=1)
+    
+    for i, (k, s) in enumerate(zip(absdelt, torch.sign(delt))):
+        pos = V[i,:k]
+
+        for j in pos:
+            q[i, j] += s / (2**bits-1)
+            
+    return q

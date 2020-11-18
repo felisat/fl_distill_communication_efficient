@@ -16,29 +16,32 @@ hyperparameters=' [{
 	
 
 	"n_clients" : [20],
-	"classes_per_client" : [100.0, 0.1],
+	"classes_per_client" : [100.0],
 	"balancedness" : [1.0],
 
 
-	"communication_rounds" : [50],
+	"communication_rounds" : [30],
 	"participation_rate" : [0.4],
 	"local_epochs" : [20],
 	"distill_iter" : [2000],
-	"n_distill" : [  80000],
-	"reset_model" : [true, false],
+	"n_distill" : [ 80000],
+	"reset_model" : [false],
 	"co_distill" : [false],
 	"co_distill_iter" : [2000], 
 	
 	
 	"batch_size" : [128],
-	"aggregation_mode" : ["FD"],
+	"aggregation_mode" : ["FDquant"],
+	"quantization_bits" : [1, 2, 4, 8, 16],
+
+	"save_softlabels" : [false],
 	
 
 	"pretrained" : ["simclr_resnet8_stl10_100epochs.pth"],
 
 	"save_model" : [null],
 	"log_frequency" : [-100],
-	"log_path" : ["reset_model_2/"],
+	"log_path" : ["quantized_cifar/"],
 	"job_id" : [['$SLURM_JOB_ID']]}]'
 
 
