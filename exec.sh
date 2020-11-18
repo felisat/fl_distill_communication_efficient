@@ -10,35 +10,35 @@
 cmdargs=$1
 
 hyperparameters=' [{
-	"dataset" : ["cifar10"], 
-	"distill_dataset" : ["stl10"],
-	"net" : ["resnet8_bn"],
+	"dataset" : ["mnist"], 
+	"distill_dataset" : ["emnist"],
+	"net" : ["lenet_mnist"],
 	
 
 	"n_clients" : [20],
-	"classes_per_client" : [ 0.1, 100.0],
+	"classes_per_client" : [100.0, 0.1],
 	"balancedness" : [1.0],
 
 
-	"communication_rounds" : [50],
+	"communication_rounds" : [20],
 	"participation_rate" : [1.0],
 	"local_epochs" : [20],
-	"distill_iter" : [2000],
-	"n_distill" : [80000],
+	"distill_iter" : [1000],
+	"n_distill" : [  100,  200,    400,    800,   1600,   3200,   6400,  12800,  25600, 51200, 102400],
 	"reset_model" : [false],
 	"co_distill" : [false],
 	"co_distill_iter" : [2000], 
 	
 	
 	"batch_size" : [128],
-	"aggregation_mode" : ["FDer", "FD"],
+	"aggregation_mode" : ["FDcup"],
 	
 
 	"pretrained" : ["simclr_resnet8_stl10_100epochs.pth"],
 
 	"save_model" : [null],
 	"log_frequency" : [-100],
-	"log_path" : ["entropy_reduction2/"],
+	"log_path" : ["dataset_size_mnist_morerounds/"],
 	"job_id" : [['$SLURM_JOB_ID']]}]'
 
 
