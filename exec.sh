@@ -16,7 +16,7 @@ hyperparameters=' [{
 	
 
 	"n_clients" : [20],
-	"classes_per_client" : [100.0],
+	"classes_per_client" : [0.1],
 	"balancedness" : [1.0],
 
 
@@ -24,7 +24,7 @@ hyperparameters=' [{
 	"participation_rate" : [0.4],
 	"local_epochs" : [20],
 	"distill_iter" : [1000],
-	"n_distill" : [ 100, 200, 400, 800, 1600, 3200, 6400, 12800, 25600, 51200],
+	"n_distill" : [  200,  800, 3200, 6400, 12800, 25600, 51200],
 	"reset_model" : [false],
 	"co_distill" : [false],
 	"co_distill_iter" : [2000], 
@@ -41,7 +41,7 @@ hyperparameters=' [{
 
 	"save_model" : [null],
 	"log_frequency" : [-100],
-	"log_path" : ["quantized_mnist_large_iid/"],
+	"log_path" : ["quantized_mnist_large_noniid/"],
 	"job_id" : [['$SLURM_JOB_ID']]}]'
 
 
