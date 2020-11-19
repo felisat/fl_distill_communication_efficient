@@ -417,7 +417,7 @@ def get_model(model):
               "mobilenetv2xs" : (mobilenetv2xs, optim.SGD, {"lr" : 0.01, "momentum" :0.9, "weight_decay" :5e-4}),
               "mobilenetv2_gn" : (mobilenetv2_gn, optim.SGD, {"lr" : 0.01, "momentum" :0.9, "weight_decay" :5e-4}),
               "resnet8_gn" : (resnet8_gn, optim.SGD, {"lr" : 0.1, "momentum" : 0.9, "weight_decay" :5e-4}),
-                "resnet8_bn" : (resnet8_bn, optim.SGD, {"lr" : 0.1}),
+                "resnet8_bn" : (resnet8_bn, optim.Adam, {"lr" : 0.001}),
                     "simclr_vgg11" : (simclrVGG11, optim.Adam, {"lr" : 0.001, "weight_decay" :5e-4})
           }[model]
 

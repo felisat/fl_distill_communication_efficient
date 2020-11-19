@@ -10,13 +10,13 @@
 cmdargs=$1
 
 hyperparameters=' [{
-	"dataset" : ["mnist"], 
-	"distill_dataset" : ["emnist"],
-	"net" : ["lenet_mnist"],
+	"dataset" : ["cifar10"], 
+	"distill_dataset" : ["stl10"],
+	"net" : ["resnet8_bn"],
 	
 
 	"n_clients" : [20],
-	"classes_per_client" : [0.1],
+	"classes_per_client" : [100.0],
 	"balancedness" : [1.0],
 
 
@@ -24,7 +24,7 @@ hyperparameters=' [{
 	"participation_rate" : [0.4],
 	"local_epochs" : [20],
 	"distill_iter" : [1000],
-	"n_distill" : [  200,  800, 3200, 6400, 12800, 25600, 51200],
+	"n_distill" : [ 100, 200, 400, 800, 1600, 3200, 6400, 12800, 25600, 51200],
 	"reset_model" : [false],
 	"co_distill" : [false],
 	"co_distill_iter" : [2000], 
@@ -41,7 +41,7 @@ hyperparameters=' [{
 
 	"save_model" : [null],
 	"log_frequency" : [-100],
-	"log_path" : ["quantized_mnist_large_noniid/"],
+	"log_path" : ["quantized_cifar_large_iid/"],
 	"job_id" : [['$SLURM_JOB_ID']]}]'
 
 
