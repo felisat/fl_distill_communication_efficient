@@ -20,11 +20,11 @@ hyperparameters=' [{
 	"balancedness" : [1.0],
 
 
-	"communication_rounds" : [30],
+	"communication_rounds" : [20],
 	"participation_rate" : [0.4],
 	"local_epochs" : [20],
-	"distill_iter" : [2000],
-	"n_distill" : [ 80000],
+	"distill_iter" : [1000],
+	"n_distill" : [ 100, 200, 400, 800, 1600, 3200, 6400, 12800, 25600, 51200],
 	"reset_model" : [false],
 	"co_distill" : [false],
 	"co_distill_iter" : [2000], 
@@ -41,7 +41,7 @@ hyperparameters=' [{
 
 	"save_model" : [null],
 	"log_frequency" : [-100],
-	"log_path" : ["quantized_mnist/"],
+	"log_path" : ["quantized_mnist_large_iid/"],
 	"job_id" : [['$SLURM_JOB_ID']]}]'
 
 
