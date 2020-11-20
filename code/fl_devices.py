@@ -302,6 +302,12 @@ class Server(Device):
             y += (y_quant/len(clients)).detach()
 
 
+        if isinstance(mode, list) and mode[0] == "quantized_down":
+          bits = mode[1]
+
+          y = quantize_probs(torch.mean(torch.stack([client.predict_max(x) for client in clients]), dim=0), bits)
+
+
         self.optimizer.zero_grad()
         y_ = nn.Softmax(1)(self.model(x))
 

@@ -10,9 +10,9 @@
 cmdargs=$1
 
 hyperparameters=' [{
-	"dataset" : ["cifar10"], 
-	"distill_dataset" : ["stl10"],
-	"net" : ["resnet8_bn"],
+	"dataset" : ["mnist"], 
+	"distill_dataset" : ["emnist"],
+	"net" : ["lenet_mnist"],
 	
 
 	"n_clients" : [20],
@@ -23,13 +23,13 @@ hyperparameters=' [{
 	"communication_rounds" : [20],
 	"participation_rate" : [0.4],
 	"local_epochs" : [5],
-	"distill_iter" : [2000],
-	"n_distill" : [3200, 6400, 12800, 25600, 51200],
-	"reset_model" : [false],
+	"distill_iter" : [1000],
+	"n_distill" : [100, 200, 400, 800, 1600, 3200, 6400, 12800, 25600, 51200],
+	"reset_model" : [false, true],
 	"co_distill" : [false],
 	"co_distill_iter" : [2000], 
 
-	"active" : [null, "margin", "certainty", "entropy", "random"],
+	"active" : [null],
 	
 	
 	"batch_size" : [128],
@@ -43,7 +43,7 @@ hyperparameters=' [{
 
 	"save_model" : [null],
 	"log_frequency" : [-100],
-	"log_path" : ["active_learning_cifar/"],
+	"log_path" : ["reset_model3/"],
 	"job_id" : [['$SLURM_JOB_ID']]}]'
 
 
