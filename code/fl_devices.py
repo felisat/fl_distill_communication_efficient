@@ -40,38 +40,6 @@ class Device(object):
     if name:
       self.model.load_state_dict(torch.load(path+name))
       if verbose: print("Loaded model from", path+name)
-    
-      
-class Client(Device):
-  def __init__(self, model_fn, optimizer_fn, loader, counts, distill_loader, init=None, idnum=None):
-    super().__init__(model_fn, optimizer_fn, loader, init)
-    self.id = idnum
-    self.feature_extractor = None
-    self.distill_loader = distill_loader
-
-  def synchronize_with_server(self, server, c_round):
-    if server.co_model is None:
-      server_state = server.model.state_dict()
-    else:
-      server_state = server.co_model.state_dict()
-      print("Using co model")
-    server_state = {k : v for k, v in server_state.items() if "binary" not in k}
-    self.model.load_state_dict(server_state, strict=False)
-    self.c_round = c_round
-
-    # update data loader subbatch distribution
-    self.loader.update(c_round=c_round)
-    #copy(target=self.W, source=server.W)
-    
-  def compute_weight_update(self, epochs=1, loader=None, reset_optimizer=False, **kwargs):
-    if reset_optimizer:
-      self.optimizer = self.optimizer_fn(self.model.parameters())  
- 
-    train_stats = train_op(self.model, self.loader if not loader else loader, self.optimizer, self.scheduler, epochs, **kwargs)
-    #print(self.label_counts)
-    #eval_scores(self.model, self.distill_loader)
-
-    return train_stats
 
 
   def predict_logit(self, x):
@@ -113,6 +81,60 @@ class Client(Device):
     adv = torch.zeros(size=[x.shape[0],10], device="cuda")
     adv[:,0] = 1.0
     return adv
+
+
+  def compute_prediction_matrix(self, distill_loader, argmax=True):
+    predictions = []
+    idcs = []
+    for x, _, idx in distill_loader:
+      x = x.to(device)
+      s_predict = self.predict(x).detach()
+      predictions += [s_predict]
+      idcs += [idx]
+
+    argidx = torch.argsort(torch.cat(idcs, dim=0))
+
+    predictions =  torch.cat(predictions, dim=0)[argidx].detach().cpu().numpy()
+
+    if argmax:
+      return np.argmax(predictions, axis=-1).astype("uint8")
+    else:
+      return predictions
+
+
+
+      
+class Client(Device):
+  def __init__(self, model_fn, optimizer_fn, loader, counts, distill_loader, init=None, idnum=None):
+    super().__init__(model_fn, optimizer_fn, loader, init)
+    self.id = idnum
+    self.feature_extractor = None
+    self.distill_loader = distill_loader
+
+  def synchronize_with_server(self, server, c_round):
+    if server.co_model is None:
+      server_state = server.model.state_dict()
+    else:
+      server_state = server.co_model.state_dict()
+      print("Using co model")
+    server_state = {k : v for k, v in server_state.items() if "binary" not in k}
+    self.model.load_state_dict(server_state, strict=False)
+    self.c_round = c_round
+
+    # update data loader subbatch distribution
+    self.loader.update(c_round=c_round)
+    #copy(target=self.W, source=server.W)
+    
+  def compute_weight_update(self, epochs=1, loader=None, reset_optimizer=False, **kwargs):
+    if reset_optimizer:
+      self.optimizer = self.optimizer_fn(self.model.parameters())  
+ 
+    train_stats = train_op(self.model, self.loader if not loader else loader, self.optimizer, self.scheduler, epochs, **kwargs)
+    #print(self.label_counts)
+    #eval_scores(self.model, self.distill_loader)
+
+    return train_stats
+
 
 
 
@@ -162,20 +184,7 @@ class Client(Device):
     return s
 
 
-  def compute_prediction_matrix(self, distill_loader):
-    predictions = []
-    idcs = []
-    for x, _, idx in distill_loader:
-      x = x.to(device)
-      s_predict = self.predict(x).detach()
-      predictions += [s_predict]
-      idcs += [idx]
 
-    argidx = torch.argsort(torch.cat(idcs, dim=0))
-
-    predictions =  torch.cat(predictions, dim=0)[argidx].detach().cpu().numpy()
-
-    return np.argmax(predictions, axis=-1).astype("uint8")
     
  
 class Server(Device):
@@ -246,7 +255,7 @@ class Server(Device):
     #for ep in range(epochs):
     while True:
       running_loss, samples = 0.0, 0
-      for x,_, idx in tqdm(self.distill_loader):   
+      for x,_, idx in self.distill_loader:   
         x = x.to(device) 
         itr += 1    
 

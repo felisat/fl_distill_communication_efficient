@@ -34,6 +34,8 @@ def run_experiment(xp, xp_count, n_experiments):
   optimizer_fn = lambda x : optimizer(x, **{k : hp[k] if k in hp else v for k, v in optimizer_hp.items()}) 
   train_data, test_data = data.get_data(hp["dataset"], args.DATA_PATH)
   all_distill_data = data.get_data(hp["distill_dataset"], args.DATA_PATH)
+  all_distill_data_indexed = data.IdxSubset(all_distill_data, np.arange(100000))
+  print(len(all_distill_data_indexed))
 
   np.random.seed(0)
   # What fraction of the unlabeled data should be used for training the anomaly detector
@@ -47,6 +49,7 @@ def run_experiment(xp, xp_count, n_experiments):
 
   test_loader = data.DataMerger({'base': data.IdxSubset(test_data, list(range(len(test_data))))}, mixture_coefficients={'base':1}, batch_size=100)
   distill_loader = DataLoader(distill_data, batch_size=128, shuffle=True)
+  all_distill_loader = DataLoader(all_distill_data_indexed, batch_size=128, shuffle=False)
 
   clients = [Client(model_fn, optimizer_fn, loader, idnum=i, counts=counts, distill_loader=distill_loader) for i, (loader , counts) in enumerate(zip(client_loaders, label_counts))]
   server = Server(model_fn, lambda x : torch.optim.Adam(x, lr=1e-3), test_loader, distill_loader)
@@ -82,6 +85,27 @@ def run_experiment(xp, xp_count, n_experiments):
     if hp["aggregation_mode"] in ["FD", "FDcup", "FDsample", "FDcupdown", "FDer", "FDquant"]:
       distill_mode = {"FD" : "mean_probs", "FDcup" : "pate_up", "FDsample" : "sample", "FDcupdown" : "pate", "FDer" : "mean_logits_er", "FDquant" : ["quantized", hp["quantization_bits"]]}[hp["aggregation_mode"]]
       distill_stats = server.distill(participating_clients, hp["distill_iter"], mode=distill_mode, reset_model=hp["reset_model"])
+
+
+      if hp["active"]:
+        
+        if hp["active"] == "random":
+          idcs = np.random.permutation(len(all_distill_data))[:hp["n_distill"]]
+        if hp["active"] == "entropy":
+          mat = server.compute_prediction_matrix(all_distill_loader, argmax=False)
+          idcs = np.argsort(-np.sum(-mat*np.log(mat), axis=1))[:hp["n_distill"]]
+
+        if hp["active"] == "certainty":
+          mat = server.compute_prediction_matrix(all_distill_loader, argmax=False)
+          idcs = np.argsort(np.max(mat, axis=1))[:hp["n_distill"]]
+
+        if hp["active"] == "margin":
+          mat = server.compute_prediction_matrix(all_distill_loader, argmax=False)
+          idcs = np.argsort(np.diff(np.sort(mat, axis=1)[:,-2:], axis=1).flatten())[:hp["n_distill"]]
+
+        distill_data = data.IdxSubset(all_distill_data, idcs)
+        distill_loader = DataLoader(distill_data, batch_size=128, shuffle=True)
+        server.distill_loader = distill_loader
 
       if hp["co_distill"]:
         server.co_distill(hp["co_distill_iter"])

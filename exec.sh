@@ -16,23 +16,25 @@ hyperparameters=' [{
 	
 
 	"n_clients" : [20],
-	"classes_per_client" : [100.0],
+	"classes_per_client" : [0.1, 100.0],
 	"balancedness" : [1.0],
 
 
 	"communication_rounds" : [20],
 	"participation_rate" : [0.4],
-	"local_epochs" : [20],
-	"distill_iter" : [1000],
-	"n_distill" : [ 100, 200, 400, 800, 1600, 3200, 6400, 12800, 25600, 51200],
+	"local_epochs" : [5],
+	"distill_iter" : [2000],
+	"n_distill" : [3200, 6400, 12800, 25600, 51200],
 	"reset_model" : [false],
 	"co_distill" : [false],
 	"co_distill_iter" : [2000], 
+
+	"active" : [null, "margin", "certainty", "entropy", "random"],
 	
 	
 	"batch_size" : [128],
-	"aggregation_mode" : ["FDquant"],
-	"quantization_bits" : [1, 2, 4, 8, 16],
+	"aggregation_mode" : ["FD"],
+	"quantization_bits" : [1],
 
 	"save_softlabels" : [false],
 	
@@ -41,7 +43,7 @@ hyperparameters=' [{
 
 	"save_model" : [null],
 	"log_frequency" : [-100],
-	"log_path" : ["quantized_cifar_large_iid/"],
+	"log_path" : ["active_learning_cifar/"],
 	"job_id" : [['$SLURM_JOB_ID']]}]'
 
 
