@@ -304,8 +304,17 @@ class Server(Device):
 
         if isinstance(mode, list) and mode[0] == "quantized_down":
           bits = mode[1]
+          bits_down = mode[2]
 
-          y = quantize_probs(torch.mean(torch.stack([client.predict_max(x) for client in clients]), dim=0), bits)
+          y = torch.zeros([x.shape[0], 10], device="cuda")
+          for i, client in enumerate(clients):
+            y_p = client.predict(x)
+            y_quant = quantize_probs(y_p, bits)
+
+            y += (y_quant/len(clients)).detach()
+
+
+          y = quantize_probs(y, bits_down)
 
 
         self.optimizer.zero_grad()

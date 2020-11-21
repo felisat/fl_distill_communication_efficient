@@ -24,8 +24,8 @@ hyperparameters=' [{
 	"participation_rate" : [0.4],
 	"local_epochs" : [5],
 	"distill_iter" : [1000],
-	"n_distill" : [100, 200, 400, 800, 1600, 3200, 6400, 12800, 25600, 51200],
-	"reset_model" : [false, true],
+	"n_distill" : [51200],
+	"reset_model" : [false],
 	"co_distill" : [false],
 	"co_distill_iter" : [2000], 
 
@@ -33,8 +33,9 @@ hyperparameters=' [{
 	
 	
 	"batch_size" : [128],
-	"aggregation_mode" : ["FD"],
-	"quantization_bits" : [1],
+	"aggregation_mode" : ["FDquantdown"],
+	"quantization_bits" : [1, 2, 4, 8, 16, 32],
+	"quantization_bits_down" : [1, 2, 4, 8, 16, 32],
 
 	"save_softlabels" : [false],
 	
@@ -43,7 +44,7 @@ hyperparameters=' [{
 
 	"save_model" : [null],
 	"log_frequency" : [-100],
-	"log_path" : ["reset_model3/"],
+	"log_path" : ["quantize_up_down_mnist/"],
 	"job_id" : [['$SLURM_JOB_ID']]}]'
 
 
