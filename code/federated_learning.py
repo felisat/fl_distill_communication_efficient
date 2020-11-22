@@ -75,7 +75,7 @@ def run_experiment(xp, xp_count, n_experiments):
                 max_c_round=hp["communication_rounds"], **hp) 
       print(train_stats)
 
-      if hp["save_softlabels"]:
+      if hp["save_softlabels"] and hp["aggregation_mode"] in ["FDcup", "FDsample", "FDcupdown", "FDer", "FDquant", "FDquantdown"]:
         predictions = client.compute_prediction_matrix(server.distill_loader)
         xp.log({"client_{}_predictions".format(client.id) : predictions})
 

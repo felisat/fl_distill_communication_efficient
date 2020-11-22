@@ -12,7 +12,7 @@ cmdargs=$1
 hyperparameters=' [{
 	"dataset" : ["cifar10"], 
 	"distill_dataset" : ["stl10"],
-	"net" : ["resnet8_bn"],
+	"net" : ["vgg16"],
 	
 
 	"n_clients" : [20],
@@ -20,11 +20,11 @@ hyperparameters=' [{
 	"balancedness" : [1.0],
 
 
-	"communication_rounds" : [20],
-	"participation_rate" : [0.4],
-	"local_epochs" : [5],
+	"communication_rounds" : [50],
+	"participation_rate" : [0.4, 1.0],
+	"local_epochs" : [20],
 	"distill_iter" : [2000],
-	"n_distill" : [51200],
+	"n_distill" : [80000],
 	"reset_model" : [false],
 	"co_distill" : [false],
 	"co_distill_iter" : [2000], 
@@ -33,18 +33,18 @@ hyperparameters=' [{
 	
 	
 	"batch_size" : [128],
-	"aggregation_mode" : ["FDquantdown"],
-	"quantization_bits" : [1, 2, 4, 8, 16, 32],
-	"quantization_bits_down" : [1, 2, 4, 8, 16, 32],
+	"aggregation_mode" : ["FDquant", "FD", "FA"],
+	"quantization_bits" : [1],
+	"quantization_bits_down" : [1],
 
-	"save_softlabels" : [false],
+	"save_softlabels" : [true],
 	
 
 	"pretrained" : ["simclr_resnet8_stl10_100epochs.pth"],
 
 	"save_model" : [null],
 	"log_frequency" : [-100],
-	"log_path" : ["quantize_up_down_cifar/"],
+	"log_path" : ["experiment_vgg16/"],
 	"job_id" : [['$SLURM_JOB_ID']]}]'
 
 
