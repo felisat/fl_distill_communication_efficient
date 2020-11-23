@@ -12,39 +12,39 @@ cmdargs=$1
 hyperparameters=' [{
 	"dataset" : ["cifar10"], 
 	"distill_dataset" : ["stl10"],
-	"net" : ["vgg16"],
+	"net" : ["resnet8_bn"],
 	
 
-	"n_clients" : [20],
-	"classes_per_client" : [0.1, 100.0],
+	"n_clients" : [20, 20, 20, 20],
+	"classes_per_client" : [0.1, 1.0, 100.0],
 	"balancedness" : [1.0],
 
 
-	"communication_rounds" : [50],
-	"participation_rate" : [0.4, 1.0],
+	"communication_rounds" : [20],
+	"participation_rate" : [0.4],
 	"local_epochs" : [20],
 	"distill_iter" : [2000],
 	"n_distill" : [80000],
-	"reset_model" : [false],
+	"reset_model" : [true, false],
 	"co_distill" : [false],
-	"co_distill_iter" : [2000], 
+	"co_distill_iter" : [4000], 
 
 	"active" : [null],
 	
 	
 	"batch_size" : [128],
-	"aggregation_mode" : ["FDquant", "FD", "FA"],
+	"aggregation_mode" : ["FD"],
 	"quantization_bits" : [1],
 	"quantization_bits_down" : [1],
 
-	"save_softlabels" : [true],
+	"save_softlabels" : [false],
 	
 
 	"pretrained" : ["simclr_resnet8_stl10_100epochs.pth"],
 
 	"save_model" : [null],
 	"log_frequency" : [-100],
-	"log_path" : ["experiment_vgg16/"],
+	"log_path" : ["reset_model_cifar_iidnoniid/"],
 	"job_id" : [['$SLURM_JOB_ID']]}]'
 
 
