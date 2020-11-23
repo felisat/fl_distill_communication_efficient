@@ -25,8 +25,8 @@ hyperparameters=' [{
 	"local_epochs" : [20],
 	"distill_iter" : [2000],
 	"n_distill" : [80000],
-	"reset_model" : [true, false],
-	"co_distill" : [false],
+	"reset_model" : [false],
+	"co_distill" : [true],
 	"co_distill_iter" : [4000], 
 
 	"active" : [null],
