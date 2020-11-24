@@ -111,7 +111,12 @@ def run_experiment(xp, xp_count, n_experiments):
         server.distill_loader = distill_loader
 
       if hp["init_mode"] == "co_distill":
-        server.co_distill(hp["co_distill_iter"])
+
+        if hp["save_softlabels"]:
+          predictions = server.compute_prediction_matrix(server.distill_loader)
+          xp.log({"server_predictions" : predictions})
+
+        server.co_distill(hp["co_distill_iter"], quantization_bits=hp["quantization_bits_down"])
 
 
     # Logging

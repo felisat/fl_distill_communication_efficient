@@ -201,7 +201,7 @@ class Server(Device):
   def aggregate_weight_updates(self, clients):
     reduce_average(target=self.W, sources=[client.W for client in clients])
 
-  def co_distill(self, distill_iter):
+  def co_distill(self, distill_iter, quantization_bits=None):
     self.co_model = self.model_fn().to(device)
 
     self.co_optimizer = self.optimizer_fn(self.co_model.parameters())   
@@ -221,6 +221,9 @@ class Server(Device):
 
         self.co_optimizer.zero_grad()
         y_ = nn.Softmax(1)(self.co_model(x))
+
+        if quantization_bits_:
+          y_ = quantize_probs(y_, quantization_bits)
 
         loss = kulbach_leibler_divergence(y_,y.detach())
 
