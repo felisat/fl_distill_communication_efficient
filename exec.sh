@@ -44,7 +44,7 @@ hyperparameters=' [{
 
 	"save_model" : [null],
 	"log_frequency" : [-100],
-	"log_path" : ["reset_model_cifar_iidnoniid/"],
+	"log_path" : ["trash/"],
 	"job_id" : [['$SLURM_JOB_ID']]}]'
 
 
