@@ -85,7 +85,9 @@ def run_experiment(xp, xp_count, n_experiments):
     if hp["aggregation_mode"] in ["FD", "FDcup", "FDsample", "FDcupdown", "FDer", "FDquant", "FDquantdown"]:
       distill_mode = {"FD" : "mean_probs", "FDcup" : "pate_up", "FDsample" : "sample", "FDcupdown" : "pate", "FDer" : "mean_logits_er", "FDquant" : ["quantized", hp["quantization_bits"]],
             "FDquantdown" : ["quantized_down", hp["quantization_bits"], hp["quantization_bits_down"]]}[hp["aggregation_mode"]]
-      distill_stats = server.distill(participating_clients, hp["distill_iter"], mode=distill_mode, reset_model=hp["reset_model"])
+
+      reset_model = True if hp["init_mode"] == "random" else False 
+      distill_stats = server.distill(participating_clients, hp["distill_iter"], mode=distill_mode, reset_model=reset_model)
 
 
       if hp["active"]:
@@ -108,7 +110,7 @@ def run_experiment(xp, xp_count, n_experiments):
         distill_loader = DataLoader(distill_data, batch_size=128, shuffle=True)
         server.distill_loader = distill_loader
 
-      if hp["co_distill"]:
+      if hp["init_mode"] == "co_distill":
         server.co_distill(hp["co_distill_iter"])
 
 
