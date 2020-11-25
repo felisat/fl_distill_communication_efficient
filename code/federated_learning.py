@@ -47,9 +47,10 @@ def run_experiment(xp, xp_count, n_experiments):
 
   client_loaders = [data.DataMerger({'base': local_data}, mixture_coefficients={'base':1}, **hp) for local_data in client_data]
 
-  test_loader = data.DataMerger({'base': data.IdxSubset(test_data, list(range(len(test_data))))}, mixture_coefficients={'base':1}, batch_size=100)
-  distill_loader = DataLoader(distill_data, batch_size=128, shuffle=True)
-  all_distill_loader = DataLoader(all_distill_data_indexed, batch_size=128, shuffle=False)
+  test_loader = data.DataMerger({'base': data.IdxSubset(test_data, list(range(len(test_data))))}, mixture_coefficients={'base':1}, batch_size=256)
+  distill_loader = DataLoader(distill_data, batch_size=hp["batch_size"], shuffle=True, num_workers=8)
+  distill_dummy_loader = DataLoader(distill_data, batch_size=2048, shuffle=False, num_workers=8)
+  all_distill_loader = DataLoader(all_distill_data_indexed, batch_size=hp["batch_size"], shuffle=False)
 
   clients = [Client(model_fn, optimizer_fn, loader, idnum=i, counts=counts, distill_loader=distill_loader) for i, (loader , counts) in enumerate(zip(client_loaders, label_counts))]
   server = Server(model_fn, lambda x : torch.optim.Adam(x, lr=1e-3), test_loader, distill_loader)
@@ -76,7 +77,7 @@ def run_experiment(xp, xp_count, n_experiments):
       print(train_stats)
 
       if hp["save_softlabels"] and hp["aggregation_mode"] in ["FDcup", "FDsample", "FDcupdown", "FDer", "FDquant", "FDquantdown"]:
-        predictions = client.compute_prediction_matrix(server.distill_loader)
+        predictions = client.compute_prediction_matrix(distill_dummy_loader)
         xp.log({"client_{}_predictions".format(client.id) : predictions})
 
     if hp["aggregation_mode"] in ["FA"]:
@@ -112,8 +113,8 @@ def run_experiment(xp, xp_count, n_experiments):
 
       if hp["init_mode"] == "co_distill":
 
-        if hp["save_softlabels"]:
-          predictions = server.compute_prediction_matrix(server.distill_loader)
+        if hp["save_softlabels"] and hp["aggregation_mode"] in ["FDcup", "FDsample", "FDcupdown", "FDer", "FDquant", "FDquantdown"]:
+          predictions = server.compute_prediction_matrix(distill_dummy_loader, argmax=False)
           xp.log({"server_predictions" : predictions})
 
         server.co_distill(hp["co_distill_iter"], quantization_bits=hp["quantization_bits_down"] if hp["aggregation_mode"] == "FDquantdown" else None)

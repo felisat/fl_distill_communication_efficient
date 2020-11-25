@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
-from torchvision.models import resnet18, alexnet
+from torchvision.models import alexnet
 from torchvision.models.resnet import ResNet, BasicBlock
 import numpy as np
 import torchvision
@@ -244,6 +244,10 @@ def apply_gn(model):
 
 def resnet8():
     return ResNet(BasicBlock, [1,1,1,1], num_classes=10)
+
+
+def resnet18():
+    return ResNet(BasicBlock, [2, 2, 2, 2], num_classes=10)
 
 
 class Model(nn.Module):

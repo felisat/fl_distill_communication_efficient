@@ -44,7 +44,7 @@ class Device(object):
 
   def predict_logit(self, x):
     """Logit prediction on input"""
-    self.model.train()
+    #self.model.train()
     with torch.no_grad():
       y_ = self.model(x)
     return y_
@@ -99,7 +99,7 @@ class Device(object):
     if argmax:
       return np.argmax(predictions, axis=-1).astype("uint8")
     else:
-      return predictions
+      return predictions.astype("float16")
 
 
 
@@ -213,7 +213,7 @@ class Server(Device):
     #for ep in range(epochs):
     while True:
       running_loss, samples = 0.0, 0
-      for x,_, idx in tqdm(self.distill_loader):   
+      for x,_, idx in self.distill_loader:   
         x = x.to(device) 
         itr += 1    
 
@@ -301,8 +301,12 @@ class Server(Device):
 
           y = torch.zeros([x.shape[0], 10], device="cuda")
           for i, client in enumerate(clients):
-            y_p = client.predict(x)
-            y_quant = quantize_probs(y_p, bits)
+            
+            if bits==1:
+              y_quant = client.predict_max(x)
+            else:
+              y_p = client.predict(x)
+              y_quant = quantize_probs(y_p, bits)
 
             y += (y_quant/len(clients)).detach()
 
@@ -345,7 +349,7 @@ def train_op(model, loader, optimizer, scheduler, epochs, lambda_fedprox=0.0, **
     model.train()  
     running_loss, samples = 0.0, 0
 
-    W0 = {k : v.detach().clone() for k, v in model.named_parameters()}
+    #W0 = {k : v.detach().clone() for k, v in model.named_parameters()}
 
     for ep in range(epochs):
       for x, y, source, index in loader:   
@@ -355,8 +359,8 @@ def train_op(model, loader, optimizer, scheduler, epochs, lambda_fedprox=0.0, **
 
         loss = nn.CrossEntropyLoss()(model(x), y)
 
-        if lambda_fedprox != 0.0:
-          loss += lambda_fedprox * torch.sum((flatten(W0).cuda()-flatten(dict(model.named_parameters())).cuda())**2)
+        #if lambda_fedprox != 0.0:
+        #  loss += lambda_fedprox * torch.sum((flatten(W0).cuda()-flatten(dict(model.named_parameters())).cuda())**2)
 
         running_loss += loss.item()*y.shape[0]
         samples += y.shape[0]

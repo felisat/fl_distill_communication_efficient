@@ -257,7 +257,7 @@ class DataMerger(object):
         coeffs = {"base" : 1.0}
       for key in self.used_data_sources:
         if coeffs[key]>0:
-          self.loaders[key] = DataLoader(self.datasets[key], batch_size=int(coeffs[key]*self.kwargs["batch_size"]), shuffle=True, pin_memory=True)
+          self.loaders[key] = DataLoader(self.datasets[key], batch_size=int(coeffs[key]*self.kwargs["batch_size"]), shuffle=True, pin_memory=True, num_workers=8)
       
 
     def __setitem__(self, key, value):
