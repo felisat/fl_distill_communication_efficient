@@ -222,8 +222,10 @@ class Server(Device):
         self.co_optimizer.zero_grad()
         y_ = nn.Softmax(1)(self.co_model(x))
 
+
         if quantization_bits:
-          y_ = quantize_probs(y_, quantization_bits)
+          y = quantize_probs(y, quantization_bits)
+
 
         loss = kulbach_leibler_divergence(y_,y.detach())
 
