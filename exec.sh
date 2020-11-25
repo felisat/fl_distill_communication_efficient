@@ -11,8 +11,8 @@ cmdargs=$1
 
 hyperparameters=' [{
 	"dataset" : ["cifar10"], 
-	"distill_dataset" : ["stl10"],
-	"net" : ["vgg16"],
+	"distill_dataset" : ["cifar100"],
+	"net" : ["alexnet"],
 	
 
 	"n_clients" : [20],
@@ -34,7 +34,7 @@ hyperparameters=' [{
 	
 	
 	"batch_size" : [128],
-	"aggregation_mode" : ["FDquant"],
+	"aggregation_mode" : ["FA", "FD", "FDquant", "FDquantdown"],
 	"quantization_bits" : [1],
 	"quantization_bits_down" : [2],
 
@@ -45,7 +45,7 @@ hyperparameters=' [{
 
 	"save_model" : [null],
 	"log_frequency" : [-100],
-	"log_path" : ["downstream_compression_vgg16/"],
+	"log_path" : ["alexnet/"],
 	"job_id" : [['$SLURM_JOB_ID']]}]'
 
 

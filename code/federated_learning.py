@@ -84,7 +84,7 @@ def run_experiment(xp, xp_count, n_experiments):
 
     if hp["aggregation_mode"] in ["FD", "FDcup", "FDsample", "FDcupdown", "FDer", "FDquant", "FDquantdown"]:
       distill_mode = {"FD" : "mean_probs", "FDcup" : "pate_up", "FDsample" : "sample", "FDcupdown" : "pate", "FDer" : "mean_logits_er", "FDquant" : ["quantized", hp["quantization_bits"]],
-            "FDquantdown" : ["quantized_down", hp["quantization_bits"], hp["quantization_bits_down"]]}[hp["aggregation_mode"]]
+            "FDquantdown" : ["quantized", hp["quantization_bits"]]}[hp["aggregation_mode"]]
 
       reset_model = True if hp["init_mode"] == "random" else False 
       distill_stats = server.distill(participating_clients, hp["distill_iter"], mode=distill_mode, reset_model=reset_model)
@@ -116,7 +116,7 @@ def run_experiment(xp, xp_count, n_experiments):
           predictions = server.compute_prediction_matrix(server.distill_loader)
           xp.log({"server_predictions" : predictions})
 
-        server.co_distill(hp["co_distill_iter"], quantization_bits=hp["quantization_bits_down"])
+        server.co_distill(hp["co_distill_iter"], quantization_bits=hp["quantization_bits_down"] if hp["aggregation_mode"] == "FDquantdown" else None)
 
 
     # Logging

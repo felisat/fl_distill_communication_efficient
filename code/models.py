@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
-from torchvision.models import resnet18
+from torchvision.models import resnet18, alexnet
 from torchvision.models.resnet import ResNet, BasicBlock
 import numpy as np
 import torchvision
@@ -313,6 +313,39 @@ class resnet8_gn(nn.Module):
 
 
 
+class AlexNet(nn.Module):
+    def __init__(self, num_classes=10):
+        super(AlexNet, self).__init__()
+        self.features = nn.Sequential(
+            nn.Conv2d(3, 64, kernel_size=3, stride=2, padding=1),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=2),
+            nn.Conv2d(64, 192, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=2),
+            nn.Conv2d(192, 384, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(384, 256, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(256, 256, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=2),
+        )
+        self.classifier = nn.Sequential(
+            #nn.Dropout(),
+            nn.Linear(256 * 2 * 2, 4096),
+            nn.ReLU(inplace=True),
+            #nn.Dropout(),
+            nn.Linear(4096, 4096),
+            nn.ReLU(inplace=True),
+            nn.Linear(4096, num_classes),
+        )
+
+    def forward(self, x):
+        x = self.features(x)
+        x = x.view(x.size(0), 256 * 2 * 2)
+        x = self.classifier(x)
+        return x
 
 
 class simclrVGG11(nn.Module):
@@ -409,6 +442,8 @@ def get_model(model):
   return  { "vgg16" : (vgg16, optim.Adam, {"lr":1e-3}),
             "vgg11s" : (vgg11s, optim.SGD, {"lr":0.04, "momentum":0.9, "weight_decay":5e-5}),
             "vgg11" : (vgg11, optim.SGD, {"lr":0.01, "momentum":0.9, "weight_decay":5e-5}),
+            "resnet18" : (resnet18, optim.Adam, {"lr":1e-3}),
+            "alexnet" : (AlexNet, optim.Adam, {"lr":1e-3}),
               "lenet_cifar" : (lenet_cifar, optim.Adam, {"lr":0.001, "weight_decay":0.0}),
                "lenet_large" : (lenet_large, optim.SGD, {"lr":0.01, "momentum" : 0.9, "weight_decay":0.0}),
               "lenet_mnist" : (lenet_mnist, optim.Adam, {"lr":0.001, "weight_decay":0.0}),
