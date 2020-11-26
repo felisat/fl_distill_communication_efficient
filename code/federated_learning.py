@@ -114,7 +114,7 @@ def run_experiment(xp, xp_count, n_experiments):
       if hp["init_mode"] == "co_distill":
 
         if hp["save_softlabels"] and hp["aggregation_mode"] in ["FDcup", "FDsample", "FDcupdown", "FDer", "FDquant", "FDquantdown"]:
-          predictions = server.compute_prediction_matrix(distill_dummy_loader, argmax=False)
+          predictions = server.compute_prediction_matrix(distill_dummy_loader, argmax=True)
           xp.log({"server_predictions" : predictions})
 
         server.co_distill(hp["co_distill_iter"], quantization_bits=hp["quantization_bits_down"] if hp["aggregation_mode"] == "FDquantdown" else None)
