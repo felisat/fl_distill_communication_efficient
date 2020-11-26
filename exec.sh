@@ -16,7 +16,7 @@ hyperparameters=' [{
 	
 
 	"n_clients" : [20],
-	"classes_per_client" : [1.0],
+	"classes_per_client" : [100.0, 1.0, 0.1],
 	"balancedness" : [1.0],
 
 
@@ -31,10 +31,11 @@ hyperparameters=' [{
 	"active" : [null],
 
 	"init_mode" : ["co_distill"],
+	"fixed_init" : [true],
 	
 	
-	"batch_size" : [128],
-	"aggregation_mode" : ["FA", "FD", "FDquant", "FDquantdown"],
+	"batch_size" : [256],
+	"aggregation_mode" : ["FDquantdown"],
 	"quantization_bits" : [1],
 	"quantization_bits_down" : [1],
 
@@ -45,7 +46,7 @@ hyperparameters=' [{
 
 	"save_model" : [null],
 	"log_frequency" : [-100],
-	"log_path" : ["large_final_experiment2/"],
+	"log_path" : ["large_final_experiment/"],
 	"job_id" : [['$SLURM_JOB_ID']]}]'
 
 

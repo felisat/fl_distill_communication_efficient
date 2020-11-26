@@ -77,7 +77,7 @@ def run_experiment(xp, xp_count, n_experiments):
       print(train_stats)
 
       if hp["save_softlabels"] and hp["aggregation_mode"] in ["FDcup", "FDsample", "FDcupdown", "FDer", "FDquant", "FDquantdown"]:
-        predictions = client.compute_prediction_matrix(distill_dummy_loader)
+        predictions = client.compute_prediction_matrix(distill_dummy_loader, argmax=True)
         xp.log({"client_{}_predictions".format(client.id) : predictions})
 
     if hp["aggregation_mode"] in ["FA"]:
@@ -117,7 +117,7 @@ def run_experiment(xp, xp_count, n_experiments):
           predictions = server.compute_prediction_matrix(distill_dummy_loader, argmax=True)
           xp.log({"server_predictions" : predictions})
 
-        server.co_distill(hp["co_distill_iter"], quantization_bits=hp["quantization_bits_down"] if hp["aggregation_mode"] == "FDquantdown" else None)
+        server.co_distill(hp["co_distill_iter"], quantization_bits=hp["quantization_bits_down"] if hp["aggregation_mode"] == "FDquantdown" else None, fixed_init=hp["fixed_init"])
 
 
     # Logging
