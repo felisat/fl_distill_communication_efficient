@@ -12,7 +12,7 @@ cmdargs=$1
 hyperparameters=' [{
 	"dataset" : ["cifar10"], 
 	"distill_dataset" : ["stl10"],
-	"net" : ["alexnet", "resnet18"],
+	"net" : ["vgg16"],
 	
 
 	"n_clients" : [20],
