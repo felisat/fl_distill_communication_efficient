@@ -31,7 +31,6 @@ hyperparameters=' [{
 	"active" : [null],
 
 	"init_mode" : ["co_distill"],
-	"fixed_init" : [true],
 	
 	
 	"batch_size" : [256],

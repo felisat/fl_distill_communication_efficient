@@ -195,7 +195,6 @@ class Server(Device):
     self.model_fn = model_fn
     self.co_model = None
 
-    self.init = self.model.state_dict()
     
   def select_clients(self, clients, frac=1.0):
     return random.sample(clients, int(len(clients)*frac)) 
@@ -203,10 +202,8 @@ class Server(Device):
   def aggregate_weight_updates(self, clients):
     reduce_average(target=self.W, sources=[client.W for client in clients])
 
-  def co_distill(self, distill_iter, quantization_bits=None, fixed_init=True):
+  def co_distill(self, distill_iter, quantization_bits=None):
     self.co_model = self.model_fn().to(device)
-    if fixed_init:
-      self.co_model.load_state_dict(self.init, strict=False)
 
     self.co_optimizer = self.optimizer_fn(self.co_model.parameters())   
     self.co_model.train()  
