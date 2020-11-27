@@ -16,7 +16,7 @@ hyperparameters=' [{
 	
 
 	"n_clients" : [20],
-	"classes_per_client" : [100.0, 1.0, 0.1],
+	"classes_per_client" : [1.0],
 	"balancedness" : [1.0],
 
 
@@ -34,7 +34,7 @@ hyperparameters=' [{
 	
 	
 	"batch_size" : [256],
-	"aggregation_mode" : ["FDquantdown"],
+	"aggregation_mode" : ["FA", "FD"],
 	"quantization_bits" : [1],
 	"quantization_bits_down" : [1],
 
