@@ -44,7 +44,7 @@ class Device(object):
 
   def predict_logit(self, x):
     """Logit prediction on input"""
-    self.model.test()
+    self.model.eval()
     with torch.no_grad():
       y_ = self.model(x)
     return y_
