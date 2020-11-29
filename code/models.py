@@ -445,7 +445,7 @@ def get_model(model):
 
   return  { "vgg16" : (vgg16, optim.Adam, {"lr":1e-3}),
             "vgg11s" : (vgg11s, optim.Adam, {"lr":1e-3}),
-            "vgg11" : (vgg11, optim.SGD, {"lr":0.01, "momentum":0.9, "weight_decay":5e-5}),
+            "vgg11" : (vgg11, optim.Adam, {"lr":1e-3}),
             "resnet18" : (resnet18, optim.Adam, {"lr":1e-3}),
             "alexnet" : (AlexNet, optim.Adam, {"lr":1e-3}),
               "lenet_cifar" : (lenet_cifar, optim.Adam, {"lr":0.001, "weight_decay":0.0}),
