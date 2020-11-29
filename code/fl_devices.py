@@ -44,7 +44,7 @@ class Device(object):
 
   def predict_logit(self, x):
     """Logit prediction on input"""
-    self.model.eval()
+    #self.model.train()
     with torch.no_grad():
       y_ = self.model(x)
     return y_
@@ -195,6 +195,7 @@ class Server(Device):
     self.model_fn = model_fn
     self.co_model = None
 
+    #self.init = self.model.state_dict()
     
   def select_clients(self, clients, frac=1.0):
     return random.sample(clients, int(len(clients)*frac)) 
@@ -207,7 +208,7 @@ class Server(Device):
 
     self.co_optimizer = self.optimizer_fn(self.co_model.parameters())   
     self.co_model.train()  
-    self.model.eval()
+    self.model.train()
 
     acc = 0
     itr = 0
@@ -432,8 +433,7 @@ def eval_scores(model, eval_loader):
 
 
 def eval_op(model, loader):
-    model.eval()
-    print("Using eval mode!!!")
+    model.train()
     samples, correct = 0, 0
 
     with torch.no_grad():

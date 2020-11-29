@@ -12,16 +12,16 @@ cmdargs=$1
 hyperparameters=' [{
 	"dataset" : ["cifar10"], 
 	"distill_dataset" : ["stl10"],
-	"net" : ["alexnet"],
+	"net" : ["vgg11"],
 	
 
-	"n_clients" : [20],
+	"n_clients" : [100],
 	"classes_per_client" : [100.0, 1.0, 0.1],
 	"balancedness" : [1.0],
 
 
-	"communication_rounds" : [50],
-	"participation_rate" : [0.4],
+	"communication_rounds" : [100],
+	"participation_rate" : [0.1],
 	"local_epochs" : [20],
 	"distill_iter" : [1000],
 	"n_distill" : [80000],
@@ -45,7 +45,7 @@ hyperparameters=' [{
 
 	"save_model" : [null],
 	"log_frequency" : [-100],
-	"log_path" : ["large_final_experiment_FA/"],
+	"log_path" : ["large_final_experiment_vgg11/"],
 	"job_id" : [['$SLURM_JOB_ID']]}]'
 
 

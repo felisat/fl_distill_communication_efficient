@@ -336,10 +336,10 @@ class AlexNet(nn.Module):
             nn.MaxPool2d(kernel_size=2),
         )
         self.classifier = nn.Sequential(
-            nn.Dropout(),
+            #nn.Dropout(),
             nn.Linear(256 * 2 * 2, 4096),
             nn.ReLU(inplace=True),
-            nn.Dropout(),
+            #nn.Dropout(),
             nn.Linear(4096, 4096),
             nn.ReLU(inplace=True),
             nn.Linear(4096, num_classes),
@@ -444,7 +444,7 @@ class Autoencoder(nn.Module):
 def get_model(model):
 
   return  { "vgg16" : (vgg16, optim.Adam, {"lr":1e-3}),
-            "vgg11s" : (vgg11s, optim.SGD, {"lr":0.04, "momentum":0.9, "weight_decay":5e-5}),
+            "vgg11s" : (vgg11s, optim.Adam, {"lr":1e-3}),
             "vgg11" : (vgg11, optim.SGD, {"lr":0.01, "momentum":0.9, "weight_decay":5e-5}),
             "resnet18" : (resnet18, optim.Adam, {"lr":1e-3}),
             "alexnet" : (AlexNet, optim.Adam, {"lr":1e-3}),
