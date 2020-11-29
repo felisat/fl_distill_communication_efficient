@@ -20,7 +20,7 @@ hyperparameters=' [{
 	"balancedness" : [1.0],
 
 
-	"communication_rounds" : [100],
+	"communication_rounds" : [50],
 	"participation_rate" : [0.4],
 	"local_epochs" : [20],
 	"distill_iter" : [1000],
@@ -34,7 +34,7 @@ hyperparameters=' [{
 	
 	
 	"batch_size" : [256],
-	"aggregation_mode" : ["FA"],
+	"aggregation_mode" : ["FA", "FD", "FDquant", "FDquantdown"],
 	"quantization_bits" : [1],
 	"quantization_bits_down" : [1],
 
