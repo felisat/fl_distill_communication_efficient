@@ -15,13 +15,13 @@ hyperparameters=' [{
 	"net" : ["vgg11"],
 	
 
-	"n_clients" : [100],
+	"n_clients" : [20],
 	"classes_per_client" : [100.0, 1.0, 0.1],
 	"balancedness" : [1.0],
 
 
-	"communication_rounds" : [100],
-	"participation_rate" : [0.1],
+	"communication_rounds" : [50],
+	"participation_rate" : [0.4],
 	"local_epochs" : [20],
 	"distill_iter" : [1000],
 	"n_distill" : [80000],
@@ -30,11 +30,11 @@ hyperparameters=' [{
 
 	"active" : [null],
 
-	"init_mode" : ["co_distill"],
+	"init_mode" : ["random","co_distill", "previous"],
 	
 	
 	"batch_size" : [256],
-	"aggregation_mode" : ["FA", "FD", "FDquant", "FDquantdown"],
+	"aggregation_mode" : ["FD"],
 	"quantization_bits" : [1],
 	"quantization_bits_down" : [1],
 
@@ -45,7 +45,7 @@ hyperparameters=' [{
 
 	"save_model" : [null],
 	"log_frequency" : [-100],
-	"log_path" : ["large_final_experiment_vgg11/"],
+	"log_path" : ["large_final_experiment_init/"],
 	"job_id" : [['$SLURM_JOB_ID']]}]'
 
 
