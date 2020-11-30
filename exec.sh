@@ -30,7 +30,9 @@ hyperparameters=' [{
 
 	"active" : [null],
 
-	"init_mode" : ["random","co_distill", "previous"],
+	"init_mode" : ["random"],
+
+	"tag" : [1],
 	
 	
 	"batch_size" : [256],
@@ -38,7 +40,7 @@ hyperparameters=' [{
 	"quantization_bits" : [1],
 	"quantization_bits_down" : [1],
 
-	"save_softlabels" : [true],
+	"save_softlabels" : [false],
 	
 
 	"pretrained" : ["simclr_resnet8_stl10_100epochs.pth"],

@@ -195,7 +195,7 @@ class Server(Device):
     self.model_fn = model_fn
     self.co_model = None
 
-    #self.init = self.model.state_dict()
+    self.init = self.model.state_dict()
     
   def select_clients(self, clients, frac=1.0):
     return random.sample(clients, int(len(clients)*frac)) 
@@ -251,6 +251,7 @@ class Server(Device):
     print("Distilling...")
     if reset_model:
       self.model = self.model_fn().to(device)
+      self.model.load_state_dict(self.init, strict=False)
       self.optimizer = self.optimizer_fn(self.model.parameters()) 
 
     if reset_optimizer:
