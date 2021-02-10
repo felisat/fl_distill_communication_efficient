@@ -138,52 +138,6 @@ class Client(Device):
 
 
 
-  def train_shallow_outlier_detector(self, model, distill_loader, **kw_args):
-    from sklearn.decomposition import PCA
-    from sklearn.svm import OneClassSVM
-    from sklearn.ensemble import IsolationForest
-    from sklearn.neural_network import MLPRegressor
-    from  sklearn.neighbors import KernelDensity
-
-
-    if self.feature_extractor is not None:
-      X_train = torch.cat([self.feature_extractor.f(x[0].cuda()).detach().cpu() for x in self.loader], dim=0).reshape(-1,512).numpy()
-      X_distill = torch.cat([self.feature_extractor.f(x[0][0].cuda()).detach().cpu() for x in distill_loader], dim=0).reshape(-1,512).numpy()
-    else:
-      X_train = torch.cat([x[0] for x in self.loader], dim=0).reshape(-1,1*32*32).numpy()
-      X_distill = torch.cat([x[0][0] for x in distill_loader], dim=0).reshape(-1,1*32*32).numpy()
-
-    pca = PCA(n_components=0.95, svd_solver="full", whiten=True)
-    pca.fit(X_train)
-    X_train_ = pca.transform(X_train)
-    X_distill_ = pca.transform(X_distill)
-
-
-    if model=="ocsvm":
-      self.outlier_model = OneClassSVM(**kw_args).fit(X_train_)
-      self.outlier_model.score = lambda x : self.outlier_model.score_samples(x)
-    
-    elif model=="isolation_forest":
-      self.outlier_model = IsolationForest(**kw_args).fit(X_train_)
-
-    elif model=="kde":
-      self.outlier_model = KernelDensity(**kw_args).fit(X_train_)
-      self.outlier_model.score = lambda x : np.exp(self.outlier_model.score_samples(x))
-
-    scores = self.outlier_model.score(X_distill_)
-
-    norm_scores = (scores-np.min(scores))/(np.max(scores)-np.min(scores))
-    self.scores = torch.Tensor(norm_scores)
-
-
-
-  def predict_deep_outlier_score(self, x):
-    self.model.eval()
-    s = torch.nn.Softmax(1)(self.model.forward_binary(x.cuda()))[:,0]
-    self.model.train()
-    return s
-
-
 
     
  
@@ -250,9 +204,12 @@ class Server(Device):
   def distill(self, clients, distill_iter, mode, reset_optimizer=False, reset_model=False):
     print("Distilling...")
     if reset_model:
+      #print(list(self.model.parameters())[0])
       self.model = self.model_fn().to(device)
-      self.model.load_state_dict(self.init, strict=False)
+      #self.model.load_state_dict(self.init, strict=False)
       self.optimizer = self.optimizer_fn(self.model.parameters()) 
+
+      #print(list(self.model.parameters())[0])
 
     if reset_optimizer:
       self.optimizer = self.optimizer_fn(self.model.parameters())   
@@ -263,7 +220,7 @@ class Server(Device):
     #for ep in range(epochs):
     while True:
       running_loss, samples = 0.0, 0
-      for x,_, idx in self.distill_loader:   
+      for x,_, idx in tqdm(self.distill_loader):   
         x = x.to(device) 
         itr += 1    
 

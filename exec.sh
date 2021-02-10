@@ -12,33 +12,31 @@ cmdargs=$1
 hyperparameters=' [{
 	"dataset" : ["cifar10"], 
 	"distill_dataset" : ["stl10"],
-	"net" : ["vgg11"],
+	"net" : ["resnet8_bn"],
 	
 
-	"n_clients" : [20],
-	"classes_per_client" : [100.0, 1.0, 0.1],
+	"n_clients" : [10, 20, 80],
+	"classes_per_client" : [1.0],
 	"balancedness" : [1.0],
 
 
 	"communication_rounds" : [50],
 	"participation_rate" : [0.4],
 	"local_epochs" : [20],
-	"distill_iter" : [1000],
+	"distill_iter" : [500],
 	"n_distill" : [80000],
 
 	"co_distill_iter" : [2000], 
 
 	"active" : [null],
 
-	"init_mode" : ["random"],
+	"init_mode" : ["previous"],
 
-	"tag" : [1],
-	
 	
 	"batch_size" : [256],
-	"aggregation_mode" : ["FD"],
+	"aggregation_mode" : ["FDquantdown"],
 	"quantization_bits" : [1],
-	"quantization_bits_down" : [1],
+	"quantization_bits_down" : [1, 2, 4, 8, 16],
 
 	"save_softlabels" : [false],
 	
@@ -47,7 +45,7 @@ hyperparameters=' [{
 
 	"save_model" : [null],
 	"log_frequency" : [-100],
-	"log_path" : ["large_final_experiment_init/"],
+	"log_path" : ["rebuttal_n_clients/"],
 	"job_id" : [['$SLURM_JOB_ID']]}]'
 
 
