@@ -37,7 +37,7 @@ def run_experiment(xp, xp_count, n_experiments):
   all_distill_data_indexed = data.IdxSubset(all_distill_data, np.arange(100000))
   print(len(all_distill_data_indexed))
 
-  np.random.seed(0)
+  np.random.seed(hp["random_seed"])
   # What fraction of the unlabeled data should be used for training the anomaly detector
   distill_data = data.IdxSubset(all_distill_data, np.random.permutation(len(all_distill_data))[:hp["n_distill"]]) # data used for distillation
 

@@ -149,7 +149,7 @@ def split_image_data(labels, n_clients, n_data, classes_per_client):
 def split_dirichlet(labels, n_clients, n_data, alpha, double_stochstic=True):
     '''Splits data among the clients according to a dirichlet distribution with parameter alpha'''
 
-    np.random.seed(0)
+    #np.random.seed(0)
 
     if isinstance(labels, torch.Tensor):
       labels = labels.numpy()
