@@ -10,7 +10,7 @@
 cmdargs=$1
 
 hyperparameters=' [{
-	"random_seed" : [3],
+	"random_seed" : [2],
 
 	"dataset" : ["cifar10"], 
 	"distill_dataset" : ["stl10"],
