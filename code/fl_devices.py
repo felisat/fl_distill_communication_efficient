@@ -158,6 +158,7 @@ class Server(Device):
     reduce_average(target=self.W, sources=[client.W for client in clients])
 
   def co_distill(self, distill_iter, quantization_bits=None):
+    print("co distilling")
     self.co_model = self.model_fn().to(device)
 
     self.co_optimizer = self.optimizer_fn(self.co_model.parameters())   
@@ -210,6 +211,7 @@ class Server(Device):
       self.optimizer = self.optimizer_fn(self.model.parameters()) 
 
       #print(list(self.model.parameters())[0])
+
 
     if reset_optimizer:
       self.optimizer = self.optimizer_fn(self.model.parameters())   

@@ -17,28 +17,28 @@ hyperparameters=' [{
 	"net" : ["resnet8_bn"],
 	
 
-	"n_clients" : [10, 20, 80],
-	"classes_per_client" : [1.0],
+	"n_clients" : [40],
+	"classes_per_client" : [10.0, 0.1],
 	"balancedness" : [1.0],
 
 
-	"communication_rounds" : [50],
-	"participation_rate" : [0.4],
-	"local_epochs" : [20],
+	"communication_rounds" : [100],
+	"participation_rate" : [0.4, 0.1],
+	"local_epochs" : [1],
 	"distill_iter" : [500],
 	"n_distill" : [80000],
 
-	"co_distill_iter" : [2000], 
+	"co_distill_iter" : [500], 
 
 	"active" : [null],
 
-	"init_mode" : ["previous"],
+	"init_mode" : ["random", "co_distill", "previous"],
 
 	
-	"batch_size" : [256],
-	"aggregation_mode" : ["FDquantdown"],
+	"batch_size" : [128],
+	"aggregation_mode" : ["FD"],
 	"quantization_bits" : [1],
-	"quantization_bits_down" : [1, 2, 4, 8, 16],
+	"quantization_bits_down" : [1],
 
 	"save_softlabels" : [false],
 	
@@ -47,7 +47,7 @@ hyperparameters=' [{
 
 	"save_model" : [null],
 	"log_frequency" : [-100],
-	"log_path" : ["rebuttal_n_clients/"],
+	"log_path" : ["rebuttal_dualdistill/"],
 	"job_id" : [['$SLURM_JOB_ID']]}]'
 
 

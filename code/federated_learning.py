@@ -88,6 +88,7 @@ def run_experiment(xp, xp_count, n_experiments):
             "FDquantdown" : ["quantized", hp["quantization_bits"]]}[hp["aggregation_mode"]]
 
       reset_model = True if hp["init_mode"] == "random" else False 
+
       distill_stats = server.distill(participating_clients, hp["distill_iter"], mode=distill_mode, reset_model=reset_model)
 
 
