@@ -10,7 +10,7 @@
 cmdargs=$1
 
 hyperparameters=' [{
-	"random_seed" : [1],
+	"random_seed" : [1, 2, 3],
 
 	"dataset" : ["mnist"], 
 	"distill_dataset" : ["emnist"],
@@ -18,12 +18,12 @@ hyperparameters=' [{
 	
 
 	"n_clients" : [100],
-	"classes_per_client" : [10.0, 0.1],
+	"classes_per_client" : [10.0],
 	"balancedness" : [1.0],
 
 
 	"communication_rounds" : [50],
-	"participation_rate" : [0.4, 0.1],
+	"participation_rate" : [0.1],
 	"local_epochs" : [5],
 	"distill_iter" : [500],
 	"n_distill" : [80000],
@@ -47,7 +47,7 @@ hyperparameters=' [{
 
 	"save_model" : [null],
 	"log_frequency" : [-100],
-	"log_path" : ["rebuttal_dualdistill_mnist/"],
+	"log_path" : ["rebuttal_dualdistill_mnist2/"],
 	"job_id" : [['$SLURM_JOB_ID']]}]'
 
 
