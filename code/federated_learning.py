@@ -69,7 +69,7 @@ def run_experiment(xp, xp_count, n_experiments):
     participating_clients = server.select_clients(clients, hp["participation_rate"])
     xp.log({"participating_clients" : np.array([client.id for client in participating_clients])})
 
-    for client in tqdm(participating_clients):
+    for client in participating_clients:
       client.synchronize_with_server(server, c_round)
 
       train_stats = client.compute_weight_update(hp["local_epochs"], train_oulier_model=hp["aggregation_mode"] in ["FAD+S", "FAD+P+S"], c_round=c_round,

@@ -192,10 +192,9 @@ class Server(Device):
         loss.backward()
         self.co_optimizer.step()  
 
-      print(running_loss / samples)
       if itr >= distill_iter:
         acc_new = eval_op(self.co_model, self.loader)["accuracy"]
-        print(acc_new)
+        print("Co Distill Acc", acc_new)
 
         #self.model.load_state_dict(self.co_model.state_dict(), strict=False)
 
@@ -209,6 +208,8 @@ class Server(Device):
       self.model = self.model_fn().to(device)
       #self.model.load_state_dict(self.init, strict=False)
       self.optimizer = self.optimizer_fn(self.model.parameters()) 
+
+      print("reset")
 
       #print(list(self.model.parameters())[0])
 
@@ -302,7 +303,7 @@ class Server(Device):
    
       if itr >= distill_iter:
         acc_new = eval_op(self.model, self.loader)["accuracy"]
-        print(acc_new)
+        print("Distill Acc", acc_new)
         return {"loss" : running_loss / samples, "acc" : acc_new}
 
 
