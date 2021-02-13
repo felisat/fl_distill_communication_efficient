@@ -14,7 +14,7 @@ hyperparameters=' [{
 
 	"dataset" : ["cifar10"], 
 	"distill_dataset" : ["stl10"],
-	"net" : ["renset8_bn"],
+	"net" : ["resnet8_bn"],
 	
 
 	"n_clients" : [50],
