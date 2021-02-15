@@ -12,9 +12,9 @@ cmdargs=$1
 hyperparameters=' [{
 	"random_seed" : [1, 2, 3],
 
-	"dataset" : ["cifar10"], 
-	"distill_dataset" : ["stl10"],
-	"net" : ["resnet8_bn"],
+	"dataset" : ["mnist"], 
+	"distill_dataset" : ["emnist"],
+	"net" : ["lenet_mnist"],
 	
 
 	"n_clients" : [50],
@@ -47,7 +47,7 @@ hyperparameters=' [{
 
 	"save_model" : [null],
 	"log_frequency" : [-100],
-	"log_path" : ["rebuttal_dualdistill_resnet3/"],
+	"log_path" : ["rebuttal_dualdistill_mnist3/"],
 	"job_id" : [['$SLURM_JOB_ID']]}]'
 
 
