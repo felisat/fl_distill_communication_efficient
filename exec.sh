@@ -18,13 +18,13 @@ hyperparameters=' [{
 	
 
 	"n_clients" : [50],
-	"classes_per_client" : [10.0],
+	"classes_per_client" : [100.0, 1.0, 0.1],
 	"balancedness" : [1.0],
 
 
 	"communication_rounds" : [50],
-	"participation_rate" : [0.1],
-	"local_epochs" : [5],
+	"participation_rate" : [0.2],
+	"local_epochs" : [10],
 	"distill_iter" : [500],
 	"n_distill" : [80000],
 
@@ -47,7 +47,7 @@ hyperparameters=' [{
 
 	"save_model" : [null],
 	"log_frequency" : [-100],
-	"log_path" : ["rebuttal_dualdistill_resnet2/"],
+	"log_path" : ["rebuttal_dualdistill_resnet3/"],
 	"job_id" : [['$SLURM_JOB_ID']]}]'
 
 
